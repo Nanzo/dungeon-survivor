@@ -183,7 +183,7 @@ export const Upgrades = [
             player.piercing = true;
             console.log(`Piercing Upgraded!`);
         }
-    }
+    },
     {
         id: 'venom_strike',
         name: 'Venomous Strike',
