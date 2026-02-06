@@ -8,7 +8,7 @@ export class Paladin extends Player {
         // Paladin Stats (Tanky, Sustain on Kill)
         this.maxHp = 150; // Highest HP
         this.hp = this.maxHp;
-        this.attackPower = 15;
+        this.attackPower = 35; // Buffed from 15
         this.defense = 8; // High Defense
         this.speed = 1.7; // Slowed from 3.0
         this.attackSpeed = 1.8; // Slower (was 0.9)

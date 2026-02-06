@@ -14,7 +14,7 @@ export class Barbarian extends Player {
         // Wait, Warrior is 2.5, Mage 1.8, Archer 3.0. 
         // Barbarian "Average" would be around 2.2? 
         this.speed = 1.8; // Slowed from 2.2
-        this.attackSpeed = 1.8; // Slower (was 0.8)
+        this.attackSpeed = 1.1; // Faster (was 1.8)
         this.attackRange = 250; // Throwing Range (Mid)
 
         // Projectile / Ability Stats

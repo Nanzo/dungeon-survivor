@@ -8,7 +8,7 @@ export class Monk extends Player {
         // Monk Stats (Fast, Combo-based)
         this.maxHp = 110; // Slightly tanky
         this.hp = this.maxHp;
-        this.attackPower = 12; // Lower base dmg, but hits twice!
+        this.attackPower = 18; // Buffed from 12
         this.defense = 3;
         this.speed = 3.5; // Fast
         this.attackSpeed = 0.9; // Fast attacks
