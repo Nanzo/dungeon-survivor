@@ -22,26 +22,25 @@ export class Warlock extends Player {
         // Poison Stats
         // 5 dmg/tick (every 0.5s) for 3s = 6 ticks * 5 = 30 dmg total (+5 initial = 35 total)
         this.poisonDamage = 5;
-        this.poisonDuration = 3; // Seconds
+        this.poisonDuration = 3000; // Milliseconds (was 3s)
 
         // UI Info
         this.description = "A dark caster who withers enemies over time. Weak initial hits but deadly poison.";
         this.roleDescription = "DoT / Debuffer";
     }
 
+    // update() removed - uses Player.update()
+
     performAttack(target) {
-        // We override this to pass specific projectile properties
-        // For Warlock, we want to inject poisonDuration and poisonDamage
-
-        // But wait, Player.perfomAttack -> fireProjectile
-        // And fireProjectile takes overrides.
-
         const overrides = {
-            image: Assets.generatePoisonBolt(),
             poisonDuration: this.poisonDuration, // Pass the duration
             poisonDamage: this.poisonDamage      // Pass the dmg per tick
         };
 
-        this.fireProjectile(target, overrides);
+        // Correct signature: target, image, overrides
+        console.log("Warlock Attacking...", target);
+        const asset = Assets.generatePoisonBolt();
+        console.log("Warlock Asset:", asset);
+        this.fireProjectile(target, asset, overrides);
     }
 }

@@ -196,7 +196,7 @@ export const Upgrades = [
                 player.poisonDamage += 2;
                 console.log(`Poison Buffed! New Tick Dmg: ${player.poisonDamage}`);
             } else {
-                player.poisonDuration = 3;
+                player.poisonDuration = 3000;
                 player.poisonDamage = 3; // Weaker than Warlock base
                 console.log(`Poison Added!`);
             }
