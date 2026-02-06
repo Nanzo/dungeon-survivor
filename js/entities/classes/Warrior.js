@@ -17,7 +17,7 @@ export class Warrior extends Player {
         // Projectile / Ability Stats
         this.projectileSpeed = 6; // Slower projectile (was 12)
         this.projectileAOE = 0; // Single Target
-        this.knockback = 45; // STARTING TRAIT: High Knockback
+        this.knockback = 100; // STARTING TRAIT: High Knockback
 
         // UI Info
         this.description = "A sturdy fighter who excels at close-range combat. High defense and health allow him to withstand heavy punishment.";

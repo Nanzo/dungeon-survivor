@@ -9,27 +9,27 @@ import { Projectile } from '../../combat/Projectile.js';
 export const GOD_CONFIG = {
     // Base Stats
     hp: 9999,
-    attackPower: 100,
+    attackPower: 5,
     speed: 5.0,
     defense: 999,
-    attackSpeed: 0.2, // Very fast attacks
+    attackSpeed: 2, // Very fast attacks
     attackRange: 800,
 
     // Projectile Stats
     projectileSpeed: 15,
-    projectileCount: 5,  // Multishot
-    projectileAOE: 100,  // Explosion Radius (0 = Single Target)
-    piercing: true,      // Piercing shots?
-    ricochet: 5,         // Bounces
-    extraStrikes: 2,     // Double/Triple strike
+    projectileCount: 0,  // Multishot
+    projectileAOE: 0,  // Explosion Radius (0 = Single Target)
+    piercing: false,      // Piercing shots?
+    ricochet: 0,         // Bounces
+    extraStrikes: 0,     // Double/Triple strike
 
     // Combat Effects
-    freezeDuration: 2000, // ms
-    knockback: 50,
-    critChance: 1.0,      // 100% Crit
+    freezeDuration: 0, // ms
+    knockback: 30,
+    critChance: 0.0,      // 100% Crit
     critDamage: 5.0,      // 500% Crit Dmg
     slowPercent: 0.5,     // 50% Slow
-    slowDuration: 3000,
+    slowDuration: 0,
 
     // Sustain
     hpRegen: 100,

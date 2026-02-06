@@ -96,10 +96,10 @@ export const Upgrades = [
     {
         id: 'knockback',
         name: 'Heavy Impact',
-        description: 'Increase Knockback by 5',
+        description: 'Increase Knockback by 25',
         rarity: 'rare',
         apply: (player) => {
-            player.knockback = (player.knockback || 0) + 5;
+            player.knockback = (player.knockback || 0) + 25;
             console.log(`Knockback Upgraded! New Knockback: ${player.knockback}`);
         }
     },
