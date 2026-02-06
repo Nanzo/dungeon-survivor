@@ -1,6 +1,6 @@
 import { Player } from '../base/Player.js';
 import { Assets } from '../../core/Assets.js';
-import { Projectile } from '../../combat/Projectile.js';
+import { HolyBolt } from '../../combat/projectiles/HolyBolt.js';
 
 export class Cleric extends Player {
     constructor(game) {
@@ -33,7 +33,7 @@ export class Cleric extends Player {
 
     performAttack(target) {
         // Holy Bolt
-        this.fireProjectile(target, Assets.generateHolyBolt(), {
+        this.spawnProjectile(HolyBolt, target, {
             range: this.attackRange
         });
     }

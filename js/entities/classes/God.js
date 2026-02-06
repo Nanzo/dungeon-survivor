@@ -1,6 +1,33 @@
 import { Player } from '../base/Player.js';
 import { Assets } from '../../core/Assets.js';
-import { Projectile } from '../../combat/Projectile.js';
+import { Fireball } from '../../combat/projectiles/Fireball.js';
+import { Arrow } from '../../combat/projectiles/Arrow.js';
+import { Sword } from '../../combat/projectiles/Sword.js';
+import { Bullet } from '../../combat/projectiles/Bullet.js';
+import { Dagger } from '../../combat/projectiles/Dagger.js';
+import { IceShard } from '../../combat/projectiles/IceShard.js';
+import { HolyBolt } from '../../combat/projectiles/HolyBolt.js';
+import { Hammer } from '../../combat/projectiles/Hammer.js';
+import { FistProjectile } from '../../combat/projectiles/FistProjectile.js';
+import { NoteProjectile } from '../../combat/projectiles/NoteProjectile.js';
+import { Axe } from '../../combat/projectiles/Axe.js';
+import { PoisonBolt } from '../../combat/projectiles/PoisonBolt.js';
+
+const PROJECTILE_MAP = {
+    'Fireball': Fireball,
+    'Arrow': Arrow,
+    'Sword': Sword,
+    'Bullet': Bullet,
+    'Dagger': Dagger,
+    'IceShard': IceShard,
+    'HolyBolt': HolyBolt,
+    'HammerProjectile': Hammer, // Mapped name from config
+    'Hammer': Hammer,
+    'Fist': FistProjectile,
+    'NoteProjectile': NoteProjectile,
+    'Axe': Axe,
+    'PoisonBolt': PoisonBolt
+};
 
 // ==========================================
 // GOD MODE CONFIGURATION
@@ -90,17 +117,11 @@ export class God extends Player {
     // update() removed - uses Player.update()
 
     performAttack(target) {
-        // Generate Asset based on config
-        let projAsset;
-        const assetName = `generate${GOD_CONFIG.projectileType}`;
-        if (Assets[assetName]) {
-            projAsset = Assets[assetName]();
-        } else {
-            projAsset = Assets.generateFireball();
-        }
+        // Resolve Class
+        const ProjClass = PROJECTILE_MAP[GOD_CONFIG.projectileType] || Fireball;
 
-        // Use Universal Fire Projectile
-        this.fireProjectile(target, projAsset, {
+        // Use Universal Spawn
+        this.spawnProjectile(ProjClass, target, {
             slowPercent: GOD_CONFIG.slowPercent,
             slowDuration: GOD_CONFIG.slowDuration
         });

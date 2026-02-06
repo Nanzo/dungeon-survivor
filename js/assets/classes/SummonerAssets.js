@@ -81,50 +81,88 @@ export const SummonerAssets = {
         canvas.height = 64;
         const ctx = canvas.getContext('2d');
 
-        // Robes (Earth/Green)
-        ctx.fillStyle = '#556B2F'; // Dark Olive Green
-        ctx.fillRect(20, 20, 24, 42);
+        // Aura: Nature Glow
+        const gradient = ctx.createRadialGradient(32, 32, 10, 32, 32, 30);
+        gradient.addColorStop(0, 'rgba(50, 205, 50, 0.3)');
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, 64, 64);
 
-        // Cloak (Brown)
-        ctx.fillStyle = '#8B4513';
-        ctx.fillRect(18, 20, 4, 35);
-        ctx.fillRect(42, 20, 4, 35);
+        // 1. Robes (Layers of Leaves and Bark)
+        // Inner Tunic (Brown)
+        ctx.fillStyle = '#5D4037';
+        ctx.fillRect(22, 25, 20, 35);
 
-        // Head (Hood/Hair)
-        ctx.fillStyle = '#556B2F';
+        // Outer Cloak (Leafy Green)
+        ctx.fillStyle = '#33691E'; // Dark Green
         ctx.beginPath();
-        ctx.arc(32, 18, 10, 0, Math.PI * 2);
+        ctx.moveTo(32, 20);
+        ctx.lineTo(50, 55); // Right drape
+        ctx.lineTo(14, 55); // Left drape
+        ctx.lineTo(32, 20);
+        ctx.fill();
+
+        // 2. Head (Antlers & Mane)
+        // Hair/Mane (Wild White/Grey)
+        ctx.fillStyle = '#E0E0E0';
+        ctx.beginPath();
+        ctx.arc(32, 20, 12, 0, Math.PI * 2);
         ctx.fill();
 
         // Face
-        ctx.fillStyle = '#E0AC69';
+        ctx.fillStyle = '#D7CCC8'; // Weathered skin
         ctx.beginPath();
-        ctx.arc(32, 20, 7, 0, Math.PI, false);
+        ctx.arc(32, 22, 8, 0, Math.PI * 2);
         ctx.fill();
 
-        // Antlers/Horns
-        ctx.strokeStyle = '#D2B48C'; // Tan
-        ctx.lineWidth = 2;
+        // Beard (Long White)
+        ctx.fillStyle = '#E0E0E0';
         ctx.beginPath();
-        ctx.moveTo(25, 12);
-        ctx.lineTo(20, 5); // Left Antler
-        ctx.moveTo(39, 12);
-        ctx.lineTo(44, 5); // Right Antler
+        ctx.moveTo(26, 26);
+        ctx.quadraticCurveTo(32, 40, 38, 26);
+        ctx.fill();
+
+        // Antlers (Majestic)
+        ctx.strokeStyle = '#D7CCC8'; // Bone/Wood color
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        // Left Antler
+        ctx.moveTo(26, 16);
+        ctx.lineTo(20, 8);
+        ctx.lineTo(16, 12); // Prongs
+        ctx.moveTo(20, 8);
+        ctx.lineTo(22, 2);
+
+        // Right Antler
+        ctx.moveTo(38, 16);
+        ctx.lineTo(44, 8);
+        ctx.lineTo(48, 12);
+        ctx.moveTo(44, 8);
+        ctx.lineTo(42, 2);
         ctx.stroke();
 
-        // Staff (Wood)
-        ctx.strokeStyle = '#654321';
+        // Eyes (Glowing Blue)
+        ctx.fillStyle = '#00E5FF';
+        ctx.fillRect(30, 20, 2, 2);
+        ctx.fillRect(34, 20, 2, 2);
+
+        // 3. Staff of Life (Glowing Top)
+        ctx.strokeStyle = '#8D6E63'; // Wood
         ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.moveTo(16, 15);
-        ctx.lineTo(16, 60);
+        ctx.moveTo(14, 15);
+        ctx.lineTo(14, 60);
         ctx.stroke();
 
-        // Leaf on Staff
-        ctx.fillStyle = '#32CD32';
+        // Crystal/Orb
+        ctx.fillStyle = '#76FF03'; // Bright Lime
+        ctx.shadowColor = '#76FF03';
+        ctx.shadowBlur = 10;
         ctx.beginPath();
-        ctx.arc(16, 12, 4, 0, Math.PI * 2);
+        ctx.arc(14, 12, 4, 0, Math.PI * 2);
         ctx.fill();
+        ctx.shadowBlur = 0; // Reset
 
         const img = new Image();
         img.src = canvas.toDataURL();

@@ -1,5 +1,6 @@
 import { Player } from '../base/Player.js';
 import { Assets } from '../../core/Assets.js';
+import { Bullet } from '../../combat/projectiles/Bullet.js';
 
 export class Gunslinger extends Player {
     constructor(game) {
@@ -29,6 +30,6 @@ export class Gunslinger extends Player {
 
     performAttack(target) {
         // Shoot Bullet
-        this.fireProjectile(target, Assets.generateBullet());
+        this.spawnProjectile(Bullet, target);
     }
 }

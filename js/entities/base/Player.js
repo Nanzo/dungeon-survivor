@@ -1,6 +1,6 @@
 import { Assets } from '../../core/Assets.js';
 import { Entity } from './Entity.js';
-import { Projectile } from '../../combat/Projectile.js';
+
 
 export class Player extends Entity {
     constructor(game) {
@@ -57,7 +57,7 @@ export class Player extends Entity {
     levelUp() {
         this.xp -= this.nextLevelXp;
         this.level++;
-        this.nextLevelXp = Math.ceil(this.nextLevelXp * 1.5); // Curve
+        this.nextLevelXp = Math.ceil(100 * this.level); // Linear: 100, 200, 300...
         console.log(`Level Up! Now Level ${this.level}`);
         this.game.triggerLevelUp(); // Notify game loop
     }
@@ -140,50 +140,60 @@ export class Player extends Entity {
         }
     }
 
-    fireProjectile(target, imageAsset, overrides = {}) {
+    spawnProjectile(ProjectileClass, target, extras = {}) {
         // 1. Calculate Damage & Crit
         const isCrit = Math.random() < this.critChance;
         let damage = this.attackPower;
         if (isCrit) damage *= this.critDamage;
 
-        // 2. Determine Stats (Allow overrides)
-        const speed = overrides.speed || this.projectileSpeed;
-        const aoe = (overrides.aoe !== undefined) ? overrides.aoe : this.projectileAOE;
-        const range = overrides.range || this.attackRange || 1000;
-        const knockback = (overrides.knockback !== undefined) ? overrides.knockback : this.knockback;
+        // 2. Determine Stats (Allow overrides via extras)
+        const speed = extras.speed || this.projectileSpeed;
+        const aoe = (extras.aoe !== undefined) ? extras.aoe : this.projectileAOE;
+        // Range: extras.range (e.g. Sword) -> this.attackRange -> default 1000
+        const range = extras.range || this.attackRange || 1000;
+        const knockback = (extras.knockback !== undefined) ? extras.knockback : this.knockback;
 
-        // 3. Create Projectile
-        const projectile = new Projectile(
+        // 3. Prepare Options for Constructor
+        const options = {
+            maxRange: range,
+            piercing: this.piercing,
+            knockback: knockback,
+            isCrit: isCrit,
+            ...extras // Allow passing other things if needed
+        };
+
+        // 4. Instantiate Specific Projectile
+        // ProjectileClass(game, x, y, target, speed, damage, aoeRadius, options)
+        const projectile = new ProjectileClass(
             this.game,
             this.x, this.y,
             target,
             speed,
             Math.round(damage),
             aoe,
-            imageAsset,
-            range,
-            this.piercing,
-            knockback,
-            isCrit
+            options
         );
 
-        // 4. Apply Universal Stats
+        // 5. Apply Universal Stats (if not handled by constructor options)
+        // Note: Projectile constructor now handles maxRange, piercing, knockback, isCrit.
+        // We still need to set status effects which might be dynamic properties on the instance.
+
         projectile.freezeDuration = this.freezeDuration;
-        projectile.poisonDuration = this.poisonDuration; // Universal Poison
-        projectile.poisonDamage = this.poisonDamage;     // Universal Poison
+        projectile.poisonDuration = this.poisonDuration;
+        projectile.poisonDamage = this.poisonDamage;
         projectile.slowDuration = this.slowDuration;
         projectile.slowPercent = this.slowPercent;
-
-        console.log(`[Player] Fired Projectile. Poison: ${this.poisonDuration > 0}, Slow: ${this.slowDuration > 0}`);
 
         // Ricochet
         if (this.projectileRicochet > 0) {
             projectile.ricochetCount = this.projectileRicochet;
-            projectile.ricochetRange = 250;
+            projectile.ricochetRange = range; // Use full range for bounces
         }
 
-        // Apply any extra overrides (like slow for Archer)
-        Object.assign(projectile, overrides);
+        // Apply explicit property overrides from extras
+        Object.assign(projectile, extras);
+
+        console.log(`[Player] Spawning ${ProjectileClass.name}. Dmg:${damage} Crit:${isCrit}`);
 
         this.game.projectiles.push(projectile);
         return projectile;

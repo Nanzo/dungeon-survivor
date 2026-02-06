@@ -1,4 +1,5 @@
 import { WarriorAssets } from '../assets/classes/WarriorAssets.js';
+import { LancerAssets } from '../assets/classes/LancerAssets.js';
 import { MageAssets } from '../assets/classes/MageAssets.js';
 import { ArcherAssets } from '../assets/classes/ArcherAssets.js';
 import { AssassinAssets } from '../assets/classes/AssassinAssets.js';
@@ -10,22 +11,34 @@ import { PaladinAssets } from '../assets/classes/PaladinAssets.js';
 import { BardAssets } from '../assets/classes/BardAssets.js';
 import { MonkAssets } from '../assets/classes/MonkAssets.js';
 import { SummonerAssets } from '../assets/classes/SummonerAssets.js';
-import { RatAssets } from '../assets/enemies/RatAssets.js';
-import { GoblinAssets } from '../assets/enemies/GoblinAssets.js';
-import { SkeletonAssets } from '../assets/enemies/SkeletonAssets.js';
-import { OrcAssets } from '../assets/enemies/OrcAssets.js';
-import { GhostAssets } from '../assets/enemies/GhostAssets.js';
-import { TrollAssets } from '../assets/enemies/TrollAssets.js';
-import { VampireAssets } from '../assets/enemies/VampireAssets.js';
-import { BeholderAssets } from '../assets/enemies/BeholderAssets.js';
-import { HydraAssets } from '../assets/enemies/HydraAssets.js';
-import { DragonAssets } from '../assets/enemies/DragonAssets.js';
-import { EnvironmentAssets } from '../assets/environment/EnvironmentAssets.js';
 import { WarlockAssets } from '../assets/classes/WarlockAssets.js';
-console.log("WarlockAssets Loaded:", WarlockAssets);
+import { EnvironmentAssets } from '../assets/environment/EnvironmentAssets.js';
+
+// Normal Enemies
+import { RatAssets } from '../assets/enemies/normal/RatAssets.js';
+import { GoblinAssets } from '../assets/enemies/normal/GoblinAssets.js';
+import { SkeletonAssets } from '../assets/enemies/normal/SkeletonAssets.js';
+import { OrcAssets } from '../assets/enemies/normal/OrcAssets.js';
+import { GhostAssets } from '../assets/enemies/normal/GhostAssets.js';
+import { TrollAssets } from '../assets/enemies/normal/TrollAssets.js';
+import { VampireAssets } from '../assets/enemies/normal/VampireAssets.js';
+import { BeholderAssets } from '../assets/enemies/normal/BeholderAssets.js';
+import { HydraAssets } from '../assets/enemies/normal/HydraAssets.js';
+import { DragonAssets } from '../assets/enemies/normal/DragonAssets.js';
+
+// Boss Enemies
+import { BossRatAssets } from '../assets/enemies/bosses/BossRatAssets.js';
+import { BossGoblinAssets } from '../assets/enemies/bosses/BossGoblinAssets.js';
+import { BossSkeletonAssets } from '../assets/enemies/bosses/BossSkeletonAssets.js';
+import { BossOrcAssets } from '../assets/enemies/bosses/BossOrcAssets.js';
+import { BossGhostAssets } from '../assets/enemies/bosses/BossGhostAssets.js';
+import { BossTrollAssets } from '../assets/enemies/bosses/BossTrollAssets.js';
+
+console.log("Assets Loaded");
 
 export class Assets {
     // Characters
+    static generateLancer() { return LancerAssets.generateLancer(); }
     static generateWarrior() { return WarriorAssets.generateWarrior(); }
     static generateMage() { return MageAssets.generateMage(); }
     static generateArcher() { return ArcherAssets.generateArcher(); }
@@ -40,7 +53,7 @@ export class Assets {
     static generateRat() { return RatAssets.generateRat(); }
     static generateWarlock() { return WarlockAssets.generateWarlock(); }
 
-    // Projectiles (Delegating to proper class)
+    // Projectiles
     static generateFireball() { return MageAssets.generateFireball(); }
     static generateArrow() { return ArcherAssets.generateArrow(); }
     static generateSword() { return WarriorAssets.generateSword(); }
@@ -50,9 +63,9 @@ export class Assets {
     static generateHolyBolt() { return ClericAssets.generateHolyBolt(); }
     static generateHammerProjectile() { return PaladinAssets.generateHammerProjectile(); }
     static generateNoteProjectile() { return BardAssets.generateNoteProjectile(); }
-    static generateNoteProjectile() { return BardAssets.generateNoteProjectile(); }
     static generateFist() { return MonkAssets.generateFistProjectile(); }
     static generatePoisonBolt() { return WarlockAssets.generatePoisonBolt(); }
+    static generateSpear() { return LancerAssets.generateSpear(); }
 
     // Summoners
     static generateNecromancer() { return SummonerAssets.generateNecromancer(); }
@@ -60,9 +73,6 @@ export class Assets {
     static generateSkeleton() { return SummonerAssets.generateSkeleton(); }
     static generateBear() { return SummonerAssets.generateBear(); }
     static generateAxe() { return BarbarianAssets.generateAxe(); }
-
-    // Fix for generateBullet above: Class methods are static, so direct call:
-    // Actually, I can just call GunslingerAssets.generateBullet().
 
     // Environment
     static generateTileset() { return EnvironmentAssets.generateTileset(); }
@@ -85,29 +95,47 @@ export class Assets {
             case 'Monk': return MonkAssets.generateMonk();
             case 'Necromancer': return Assets.generateNecromancer();
             case 'Druid': return Assets.generateDruid();
-            case 'God': return Assets.generateWarrior(); // Fallback for God icon
+            case 'God': return Assets.generateWarrior();
             case 'Warlock': return Assets.generateWarlock();
+            case 'Lancer': return Assets.generateLancer();
             default: return RatAssets.generateRat();
         }
     }
 
     // Bestiary Helpers
-    static getEnemyAsset(key) {
-        switch (key) {
-            case 'rat': return RatAssets.generateRat();
-            case 'goblin': return GoblinAssets.generateGoblin();
-            case 'skeleton': return SkeletonAssets.generateSkeleton();
-            case 'orc': return OrcAssets.generateOrc();
-            case 'ghost': return GhostAssets.generateGhost();
-            case 'troll': return TrollAssets.generateTroll();
-            case 'vampire': return VampireAssets.generateVampire();
-            case 'beholder': return BeholderAssets.generateBeholder();
-            case 'hydra': return HydraAssets.generateHydra();
-            case 'dragon': return DragonAssets.generateDragon();
-            default: return RatAssets.generateRat();
+    static getEnemyAsset(key, isBoss = false) {
+        if (isBoss) {
+            switch (key) {
+                case 'rat': return BossRatAssets.generateBossRat();
+                case 'goblin': return BossGoblinAssets.generateBossGoblin();
+                case 'skeleton': return BossSkeletonAssets.generateBossSkeleton();
+                case 'orc': return BossOrcAssets.generateBossOrc();
+                case 'ghost': return BossGhostAssets.generateBossGhost();
+                case 'troll': return BossTrollAssets.generateBossTroll();
+                // Fallbacks for un-implemented Boss Assets (will be scaled normal assets)
+                case 'vampire': return VampireAssets.generateVampire();
+                case 'beholder': return BeholderAssets.generateBeholder();
+                case 'hydra': return HydraAssets.generateHydra();
+                case 'dragon': return DragonAssets.generateDragon();
+                default: return BossRatAssets.generateBossRat();
+            }
+        } else {
+            switch (key) {
+                case 'rat': return RatAssets.generateRat();
+                case 'goblin': return GoblinAssets.generateGoblin();
+                case 'skeleton': return SkeletonAssets.generateSkeleton();
+                case 'orc': return OrcAssets.generateOrc();
+                case 'ghost': return GhostAssets.generateGhost();
+                case 'troll': return TrollAssets.generateTroll();
+                case 'vampire': return VampireAssets.generateVampire();
+                case 'beholder': return BeholderAssets.generateBeholder();
+                case 'hydra': return HydraAssets.generateHydra();
+                case 'dragon': return DragonAssets.generateDragon();
+                default: return RatAssets.generateRat();
+            }
         }
     }
 }
 
-// Re-implementing generateBullet simpler to avoid confusion in the export above
+// Fix for generateBullet usage
 Assets.generateBullet = function () { return GunslingerAssets.generateBullet(); };

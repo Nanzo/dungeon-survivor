@@ -14,13 +14,14 @@ import { Necromancer } from './entities/classes/Necromancer.js';
 import { Druid } from './entities/classes/Druid.js';
 import { Warlock } from './entities/classes/Warlock.js';
 import { God } from './entities/classes/God.js';
+import { Lancer } from './entities/classes/Lancer.js';
 import { Map } from './world/Map.js?v=3';
-import { Rat } from './entities/enemies/Rat.js';
+
 import { Monster } from './entities/enemies/Monster.js';
 import { Bestiary } from './core/Bestiary.js';
 import { FloatingText } from './ui/FloatingText.js';
 import { Assets } from './core/Assets.js?v=2';
-import { Explosion } from './combat/Explosion.js';
+import { Explosion } from './combat/fx/Explosion.js';
 import { LevelUpScreen } from './ui/LevelUpScreen.js';
 
 // GLOBAL ERROR HANDLER
@@ -87,6 +88,8 @@ class Game {
             this.player = new Druid(this);
         } else if (classType === 'warlock') {
             this.player = new Warlock(this);
+        } else if (classType === 'lancer') {
+            this.player = new Lancer(this);
         } else if (classType === 'god') {
             this.player = new God(this);
         } else {
@@ -133,6 +136,9 @@ class Game {
             lok: document.getElementById('hudLoK'),
             ricochet: document.getElementById('hudRicochet'),
             doubleStrike: document.getElementById('hudDbl'),
+            poison: document.getElementById('hudPoison'),
+            poisonContainer: document.getElementById('hudPoison')?.parentNode,
+            block: document.getElementById('hudBlock'),
 
             xpFill: document.getElementById('xpBarFill'),
             xpText: document.getElementById('xpText')
@@ -143,7 +149,14 @@ class Game {
 
     triggerLevelUp() {
         this.isPaused = true;
-        this.levelUpScreen.show();
+        this.levelUpScreen.show(); // Default behavior
+    }
+
+    triggerBossReward() {
+        this.isPaused = true;
+        // Show Level Up Screen but with minRarity = 'rare'
+        console.log("[Game] Boss Defeated! Triggering Rare Rewards.");
+        this.levelUpScreen.show('rare');
     }
 
     togglePause() {
@@ -244,8 +257,8 @@ class Game {
                                 <span>Knockback: <span style="color:gold">${this.player.knockback || 0}</span></span>
                             </div>
                             <div style="display: flex; justify-content: space-between;">
-                                <span>Slow: <span style="color:gold">${(this.player.constructor.name === 'Archer') ? "30%" : "No"}</span></span>
-                                <span>Freeze: <span style="color:gold">${(this.player.freezeDuration > 0) ? (this.player.freezeDuration / 1000).toFixed(1) + 's' : "No"}</span></span>
+                                <span>Slow: <span style="color:gold">${Math.round((this.player.slowPercent || 0) * 100)}%</span></span>
+                                <span>Freeze: <span style="color:gold">${(this.player.freezeDuration || 0) / 1000}s</span></span>
                             </div>
                             <div style="display: flex; justify-content: space-between;">
                                 <span>Ex. Strikes: <span style="color:gold">${this.player.extraStrikes ? ("+" + this.player.extraStrikes) : "0"}</span></span>
@@ -305,12 +318,21 @@ class Game {
         const currentInterval = Math.max(200, 2000 - (this.player.level * 150));
 
         if (this.enemyTimer > currentInterval) {
-            // Pass current player level to scale the enemy
-            // Old: this.enemies.push(new Rat(this, this.player.level));
-
             // New: Bestiary
             const monsterConfig = Bestiary.getSpawn(this.player.level);
-            this.enemies.push(new Monster(this, monsterConfig, this.player.level));
+
+            // Generate NEW config object to avoid mutating the Bestiary reference
+            const spawnConfig = { ...monsterConfig };
+
+            // BOSS CHECK: Guaranteed every 5 levels
+            // Logic: If level is multiple of 5, and we haven't spawned a boss for this level yet.
+            if (this.player.level % 5 === 0 && (this.lastBossLevel || 0) < this.player.level) {
+                spawnConfig.isBoss = true;
+                this.lastBossLevel = this.player.level;
+                console.log(`[Game] Spawning BOSS for Level ${this.player.level}! Type: ${spawnConfig.name}`);
+            }
+
+            this.enemies.push(new Monster(this, spawnConfig, this.player.level));
 
             this.enemyTimer = 0;
         } else {
@@ -323,8 +345,14 @@ class Game {
             if (enemy.markedForDeletion && enemy.hp <= 0) { // Only if killed, not just despawned
                 if (enemy.xpValue) this.player.gainXp(enemy.xpValue);
                 if (this.player.lifeOnKill > 0) this.player.heal(this.player.lifeOnKill);
+
+                // Check for Boss Kill
+                if (enemy.isBoss) {
+                    this.triggerBossReward();
+                }
             }
         });
+
         this.enemies = this.enemies.filter(enemy => !enemy.markedForDeletion);
 
         this.projectiles.forEach(proj => proj.update(deltaTime));
@@ -346,6 +374,7 @@ class Game {
         this.hud.level.innerText = this.player.level;
         this.hud.hp.innerText = `${Math.ceil(Math.max(0, this.player.hp))}/${this.player.maxHp}`;
         this.hud.atk.innerText = this.player.attackPower;
+        const reducPercent = this.player.damageReduction ? Math.round(this.player.damageReduction * 100) : 0;
         this.hud.def.innerText = this.player.defense;
         this.hud.spd.innerText = this.player.speed.toFixed(1);
 
@@ -366,8 +395,8 @@ class Game {
         // Let's check constructor name or if we standardise it.
         // Better: Add 'slowChance' or 'slowPower' to Player base if we want it generic.
         // For now, simple check:
-        this.hud.slow.innerText = (this.player.constructor.name === 'Archer') ? "30%" : "No";
-        this.hud.freeze.innerText = (this.player.freezeDuration > 0) ? (this.player.freezeDuration / 1000).toFixed(1) + 's' : "No";
+        this.hud.slow.innerText = (this.player.slowPercent > 0) ? Math.round(this.player.slowPercent * 100) + "%" : "0%";
+        this.hud.freeze.innerText = (this.player.freezeDuration > 0) ? (this.player.freezeDuration / 1000).toFixed(1) + 's' : "0s";
 
         // Sustain Stats
         this.hud.regen.innerText = (this.player.hpRegen > 0) ? this.player.hpRegen + "/s" : "0";
@@ -376,11 +405,15 @@ class Game {
         this.hud.doubleStrike.innerText = this.player.extraStrikes > 0 ? ("+" + this.player.extraStrikes) : "0";
 
         // Poison HUD
-        if (this.player.poisonDuration > 0) {
-            this.hud.container.querySelector('#hudPoison').innerText = `${this.player.poisonDamage}/tick`;
-            this.hud.container.querySelector('#hudPoison').parentNode.style.display = 'block';
-        } else {
-            this.hud.container.querySelector('#hudPoison').parentNode.style.display = 'none';
+        if (this.hud.poison && this.hud.poisonContainer) {
+            this.hud.poisonContainer.style.display = 'block'; // Reverted to block to support 'float: right' in CSS
+            this.hud.poison.innerText = (this.player.poisonDuration > 0) ? `${this.player.poisonDamage}/tick` : "0";
+        }
+
+        // Block HUD (Iron Skin / Damage Reduction)
+        if (this.hud.block) {
+            const reducPercent = this.player.damageReduction ? Math.round(this.player.damageReduction * 100) : 0;
+            this.hud.block.innerText = reducPercent + '%';
         }
 
         // XP Bar
@@ -573,6 +606,14 @@ if (warlockBtn) {
     warlockIcon.style.verticalAlign = 'middle';
 }
 
+const lancerBtn = document.getElementById('btnLancer');
+if (lancerBtn) {
+    const lancerIcon = Assets.generateLancer();
+    lancerBtn.prepend(lancerIcon);
+    lancerIcon.style.marginRight = '15px';
+    lancerIcon.style.verticalAlign = 'middle';
+}
+
 const godBtn = document.getElementById('btnGod');
 // God button listener - Skip Preview, Start Immediately
 if (godBtn) godBtn.addEventListener('click', () => startGame('god'));
@@ -655,6 +696,7 @@ function showClassPreview(classType) {
     else if (classType === 'necromancer') dummyPlayer = new Necromancer(dummyGame);
     else if (classType === 'druid') dummyPlayer = new Druid(dummyGame);
     else if (classType === 'warlock') dummyPlayer = new Warlock(dummyGame);
+    else if (classType === 'lancer') dummyPlayer = new Lancer(dummyGame);
     else dummyPlayer = new Warrior(dummyGame);
 
     // Populate UI
@@ -716,8 +758,7 @@ function showClassPreview(classType) {
         });
     }
 
-    // Archer Slow (Hack for now as it's not on "this" but on projectile logic)
-    if (dummyPlayer.constructor.name === 'Archer') specialTraits.push({ name: 'Slow', val: '30%', color: '#ffa' });
+    if (dummyPlayer.slowPercent > 0) specialTraits.push({ name: 'Slow', val: Math.round(dummyPlayer.slowPercent * 100) + '%', color: '#ffa' });
 
 
     if (specialTraits.length === 0) {
@@ -752,6 +793,7 @@ if (monkBtn) monkBtn.addEventListener('click', () => showClassPreview('monk'));
 if (necroBtn) necroBtn.addEventListener('click', () => showClassPreview('necromancer'));
 if (druidBtn) druidBtn.addEventListener('click', () => showClassPreview('druid'));
 if (warlockBtn) warlockBtn.addEventListener('click', () => showClassPreview('warlock'));
+if (lancerBtn) lancerBtn.addEventListener('click', () => showClassPreview('lancer'));
 
 if (cpBackBtn) {
     cpBackBtn.addEventListener('click', () => {

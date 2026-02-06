@@ -1,6 +1,6 @@
 import { Player } from '../base/Player.js';
 import { Assets } from '../../core/Assets.js';
-import { Projectile } from '../../combat/Projectile.js';
+import { Dagger } from '../../combat/projectiles/Dagger.js';
 
 export class Assassin extends Player {
     constructor(game) {
@@ -34,7 +34,7 @@ export class Assassin extends Player {
     performAttack(target) {
         // Throw Dagger
         // Crit calculated automatically in fireProjectile based on this.critChance (which Assassin overrides)
-        this.fireProjectile(target, Assets.generateDagger(), {
+        this.spawnProjectile(Dagger, target, {
             range: this.attackRange // Limited range
         });
     }

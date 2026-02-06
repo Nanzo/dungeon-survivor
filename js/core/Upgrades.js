@@ -2,10 +2,10 @@ export const Upgrades = [
     {
         id: 'strength',
         name: 'Strength',
-        description: 'Increase Damage by 20%',
-        rarity: 'common',
+        description: 'Increase Damage by 10%',
+        rarity: 'common', // Reverted to Common (Nerfed)
         apply: (player) => {
-            player.attackPower = Math.ceil(player.attackPower * 1.2);
+            player.attackPower = Math.ceil(player.attackPower * 1.1);
             console.log(`Strength Upgraded! New Damage: ${player.attackPower}`);
         }
     },
@@ -13,7 +13,7 @@ export const Upgrades = [
         id: 'haste',
         name: 'Haste',
         description: 'Increase Attack Speed by 15%',
-        rarity: 'uncommon', // Changed to uncommon
+        rarity: 'common', // Downgraded rarity (User Request)
         apply: (player) => {
             player.attackSpeed = Math.max(0.1, player.attackSpeed * 0.85); // Lower is faster
             console.log(`Haste Upgraded! New Speed: ${player.attackSpeed.toFixed(2)}s`);
@@ -22,32 +22,43 @@ export const Upgrades = [
     {
         id: 'vitality',
         name: 'Vitality',
-        description: 'Increase Max HP by 20% & Heal',
-        rarity: 'common',
+        description: 'Increase Max HP by 10% & Heal',
+        rarity: 'common', // Reverted to Common (Nerfed)
         apply: (player) => {
             const oldMax = player.maxHp;
-            player.maxHp = Math.ceil(player.maxHp * 1.2);
-            player.hp += (player.maxHp - oldMax) + 20; // Increase max + heal a bit
+            player.maxHp = Math.ceil(player.maxHp * 1.1);
+            player.hp += (player.maxHp - oldMax) + 10;
             if (player.hp > player.maxHp) player.hp = player.maxHp;
             console.log(`Vitality Upgraded! New MaxHP: ${player.maxHp}`);
         }
 
     },
     {
-        id: 'iron_skin',
-        name: 'Iron Skin',
-        description: 'Increase Defense by 3',
+        id: 'reinforced_armor',
+        name: 'Reinforced Armor',
+        description: 'Increase Defense by 5',
         rarity: 'common',
         apply: (player) => {
-            player.defense += 3;
-            console.log(`Iron Skin Upgraded! New Defense: ${player.defense}`);
+            player.defense += 5;
+            console.log(`Armor Upgraded! New Defense: ${player.defense}`);
+        }
+    },
+    {
+        id: 'iron_skin',
+        name: 'Iron Skin',
+        description: 'Reduce incoming damage by 10% (Max 80%)',
+        rarity: 'uncommon', // Stronger mitigation
+        condition: (player) => (player.damageReduction || 0) < 0.8,
+        apply: (player) => {
+            player.damageReduction = (player.damageReduction || 0) + 0.10;
+            console.log(`Iron Skin Upgraded! Reduction: ${(player.damageReduction * 100).toFixed(0)}%`);
         }
     },
     {
         id: 'swiftness',
         name: 'Swiftness',
         description: 'Increase Move Speed by 10%',
-        rarity: 'uncommon', // Changed to uncommon
+        rarity: 'common', // Reverted to common per user request
         apply: (player) => {
             player.speed *= 1.1;
             console.log(`Swiftness Upgraded! New Speed: ${player.speed.toFixed(2)}`);
@@ -56,30 +67,30 @@ export const Upgrades = [
     {
         id: 'scope',
         name: 'Scope',
-        description: 'Increase Attack Range by 50',
-        rarity: 'uncommon', // Changed to uncommon
+        description: 'Increase Attack Range by 100',
+        rarity: 'uncommon',
         apply: (player) => {
-            player.attackRange += 50;
+            player.attackRange += 100;
             console.log(`Scope Upgraded! New Range: ${player.attackRange}`);
         }
     },
     {
         id: 'explosive',
         name: 'Explosive Rounds',
-        description: 'Increase Blast Radius by 25',
+        description: 'Increase Blast Radius by 50',
         rarity: 'rare',
         apply: (player) => {
-            player.projectileAOE += 25;
+            player.projectileAOE += 50;
             console.log(`Explosive Upgraded! New AOE: ${player.projectileAOE}`);
         }
     },
     {
         id: 'velocity',
         name: 'High Velocity',
-        description: 'Increase Projectile Speed by 2',
-        rarity: 'uncommon', // Projectile Speed is uncommon
+        description: 'Increase Projectile Speed by 1',
+        rarity: 'common', // Downgraded
         apply: (player) => {
-            player.projectileSpeed += 2;
+            player.projectileSpeed += 1;
             console.log(`Velocity Upgraded! New ProjSpeed: ${player.projectileSpeed}`);
         }
     },
@@ -87,7 +98,7 @@ export const Upgrades = [
         id: 'multishot',
         name: 'Multishot',
         description: '+1 Projectile (Extra shots hit random nearby enemies)',
-        rarity: 'rare', // Rare upgrade!
+        rarity: 'legendary', // Lengendary upgrade!
         apply: (player) => {
             player.projectileCount = (player.projectileCount || 1) + 1;
             console.log(`Multishot Upgraded! Total Projectiles: ${player.projectileCount}`);
@@ -106,10 +117,10 @@ export const Upgrades = [
     {
         id: 'deep_freeze',
         name: 'Deep Freeze',
-        description: '+0.5s Freeze Duration',
-        rarity: 'rare',
+        description: '+1.0s Freeze Duration',
+        rarity: 'epic',
         apply: (player) => {
-            player.freezeDuration = (player.freezeDuration || 0) + 500;
+            player.freezeDuration = (player.freezeDuration || 0) + 1000;
             console.log(`Freeze Upgraded! New Duration: ${player.freezeDuration}ms`);
         }
     },
@@ -137,7 +148,7 @@ export const Upgrades = [
         id: 'blessed_aura',
         name: 'Blessed Aura',
         description: '+2 HP Regen / Sec',
-        rarity: 'rare',
+        rarity: 'uncommon', // Changed to Uncommon per user request
         apply: (player) => {
             player.hpRegen = (player.hpRegen || 0) + 2;
             console.log(`HpRegen Upgraded! New Regen: ${player.hpRegen}/s`);
@@ -146,10 +157,10 @@ export const Upgrades = [
     {
         id: 'divine_favor',
         name: 'Divine Favor',
-        description: '+3 HP on Kill',
+        description: '+10 HP on Kill',
         rarity: 'rare',
         apply: (player) => {
-            player.lifeOnKill = (player.lifeOnKill || 0) + 3;
+            player.lifeOnKill = (player.lifeOnKill || 0) + 10;
             console.log(`LifeOnKill Upgraded! New Lifesteal: ${player.lifeOnKill}`);
         }
     },
@@ -157,7 +168,7 @@ export const Upgrades = [
         id: 'acoustics',
         name: 'Acoustics',
         description: '+1 Ricochet / Bounce',
-        rarity: 'rare',
+        rarity: 'epic', // Epic
         condition: (player) => !player.piercing, // Incompatible with Pierce
         apply: (player) => {
             player.projectileRicochet = (player.projectileRicochet || 0) + 1;
@@ -166,9 +177,9 @@ export const Upgrades = [
     },
     {
         id: 'combo_strike',
-        name: 'Combo Strike', // Renamed from Double Strike
+        name: 'Combo Strike',
         description: '+1 Extra Hit per Attack (Stackable!)',
-        rarity: 'rare',
+        rarity: 'legendary', // Legendary
         apply: (player) => {
             player.extraStrikes = (player.extraStrikes || 0) + 1;
             console.log(`Combo Strike Upgraded! Total Extra Strikes: ${player.extraStrikes}`);
@@ -178,7 +189,7 @@ export const Upgrades = [
         id: 'piercing_rounds',
         name: 'Piercing Rounds',
         description: 'Projectiles pass through enemies',
-        rarity: 'rare',
+        rarity: 'epic', // Epic
         condition: (player) => !player.piercing && (player.projectileRicochet || 0) === 0, // Incompatible with Ricochet
         apply: (player) => {
             player.piercing = true;
@@ -188,17 +199,15 @@ export const Upgrades = [
     {
         id: 'venom_strike',
         name: 'Venomous Strike',
-        description: 'Attacks apply Poison (3 dmg/s for 3s)',
+        description: 'Attacks apply Poison (3 dmg / 0.5s for 3s)',
         rarity: 'uncommon',
         apply: (player) => {
-            // If player already has poison, buff it?
-            // Or just set it if not present.
             if (player.poisonDuration > 0) {
-                player.poisonDamage += 2;
+                player.poisonDamage += 3;
                 console.log(`Poison Buffed! New Tick Dmg: ${player.poisonDamage}`);
             } else {
                 player.poisonDuration = 3000;
-                player.poisonDamage = 3; // Weaker than Warlock base
+                player.poisonDamage = 3;
                 console.log(`Poison Added!`);
             }
         }
@@ -207,27 +216,107 @@ export const Upgrades = [
         id: 'crippling_shot',
         name: 'Crippling Shot',
         description: 'Attacks Slow enemies by 15% for 1.5s',
-        rarity: 'rare',
+        rarity: 'rare', // User requested Blue (Rare)
+        condition: (player) => (player.slowPercent || 0) < 1.0, // Stop at 100%
         apply: (player) => {
-            // Apply a "slowOverride" logic or just generic slow application capability
-            // Since Projectile doesn't have a generic "slow" property yet, we might need to add it to Player and Projectile.
-            // For now, let's assume we add a 'slowDuration' and 'slowPercent' to Player.
-            player.slowDuration = 1500;
-            player.slowPercent = 0.15;
-            console.log(`Crippling Shot Acquired! Slows by 15%`);
+            player.slowDuration = 1500; // Standardized to 1.5s
+            player.slowPercent = Math.min(1.0, (player.slowPercent || 0) + 0.10);
+            console.log(`Crippling Shot Acquired! Slows by 10% (Total: ${(player.slowPercent * 100).toFixed(0)}%)`);
         }
     }
 ];
 
-export function getRandomUpgrades(count, player) {
-    // Filter upgrades based on condition (if exists)
+export function getRandomUpgrades(count, player, minRarity = 'common') {
+    // 1. Define Weights
+    const rarityWeights = {
+        common: 50,
+        uncommon: 30,
+        rare: 15,
+        epic: 4,
+        legendary: 1
+    };
+
+    // Filter weights based on minRarity
+    let activeWeights = { ...rarityWeights };
+    if (minRarity === 'uncommon') {
+        delete activeWeights.common;
+    } else if (minRarity === 'rare') {
+        delete activeWeights.common;
+        delete activeWeights.uncommon;
+    } else if (minRarity === 'epic') {
+        delete activeWeights.common;
+        delete activeWeights.uncommon;
+        delete activeWeights.rare;
+    }
+
+    // Update total weight
+    const totalWeight = Object.values(activeWeights).reduce((a, b) => a + b, 0);
+
+    // 2. Filter available upgrades based on condition AND allowed rarities
     const available = Upgrades.filter(u => {
+        // Filter by Condition
         if (u.condition && player) {
-            return u.condition(player);
+            if (!u.condition(player)) return false;
         }
+
+        // Filter by Allowed Rarity (must be in activeWeights)
+        if (activeWeights[u.rarity] === undefined) return false;
+
         return true;
     });
 
-    const shuffled = [...available].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, count);
+    // Fallback if empty (e.g. no upgrades left for this rarity tier)
+    let pool = available;
+    let currentTotalWeight = totalWeight;
+
+    if (pool.length === 0) {
+        console.warn(`[Upgrades] No upgrades found for minRarity ${minRarity}. Falling back to all.`);
+        pool = Upgrades.filter(u => !u.condition || u.condition(player));
+        currentTotalWeight = 100;
+        activeWeights = rarityWeights;
+    }
+
+    const selected = [];
+    const maxRetries = 50;
+
+    for (let i = 0; i < count; i++) {
+        let upgradeToAdd = null;
+        let attempts = 0;
+
+        while (!upgradeToAdd && attempts < maxRetries) {
+            attempts++;
+
+            // 3. Roll Rarity
+            const roll = Math.random() * currentTotalWeight;
+            let chosenRarity = Object.keys(activeWeights)[0];
+            let cumulative = 0;
+
+            for (const [rarity, weight] of Object.entries(activeWeights)) {
+                cumulative += weight;
+                if (roll < cumulative) {
+                    chosenRarity = rarity;
+                    break;
+                }
+            }
+
+            // 4. Find upgrades of this rarity
+            const rarityPool = pool.filter(u => u.rarity === chosenRarity && !selected.includes(u));
+
+            if (rarityPool.length > 0) {
+                upgradeToAdd = rarityPool[Math.floor(Math.random() * rarityPool.length)];
+            } else {
+                // Fallback to any available unique upgrade
+                const fallbackPool = pool.filter(u => !selected.includes(u));
+                if (fallbackPool.length > 0) {
+                    upgradeToAdd = fallbackPool[Math.floor(Math.random() * fallbackPool.length)];
+                }
+            }
+        }
+
+        if (upgradeToAdd) {
+            selected.push(upgradeToAdd);
+        }
+    }
+
+    return selected;
 }

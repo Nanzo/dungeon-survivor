@@ -1,6 +1,6 @@
 import { Player } from '../base/Player.js';
 import { Assets } from '../../core/Assets.js';
-import { Projectile } from '../../combat/Projectile.js';
+import { Axe } from '../../combat/projectiles/Axe.js';
 
 export class Barbarian extends Player {
     constructor(game) {
@@ -20,11 +20,12 @@ export class Barbarian extends Player {
         // Projectile / Ability Stats
         this.projectileSpeed = 5; // Slowed from 14
         this.projectileAOE = 0;
-        this.piercing = true; // STARTING TRAIT: Pierce
+        this.piercing = false; // Removed Piercing (Moved to Lancer)
+        this.knockback = 100; // STARTING TRAIT: High Knockback (Inherited from old Warrior)
 
         // UI Info
-        this.description = "A brutal warrior who throws piercing axes that can cleave through multiple enemies.";
-        this.roleDescription = "Piercing / Burst DPS";
+        this.description = "A brutal warrior who throws piercing axes that cleave through enemies and knock them back with immense force.";
+        this.roleDescription = "Pierce / Knockback DPS";
 
         this.image = Assets.generateBarbarian();
     }
@@ -34,6 +35,8 @@ export class Barbarian extends Player {
     performAttack(target) {
         // Throw Axe
         // Barbarian has this.piercing = true in constructor, so fireProjectile picks it up automatically!
-        this.fireProjectile(target, Assets.generateAxe());
+        this.spawnProjectile(Axe, target, {
+            knockback: this.knockback
+        });
     }
 }

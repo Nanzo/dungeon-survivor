@@ -1,6 +1,6 @@
 import { Player } from '../base/Player.js';
 import { Assets } from '../../core/Assets.js';
-import { Projectile } from '../../combat/Projectile.js';
+import { NoteProjectile } from '../../combat/projectiles/NoteProjectile.js';
 
 export class Bard extends Player {
     constructor(game) {
@@ -12,13 +12,13 @@ export class Bard extends Player {
         this.defense = 2;
         this.speed = 3.2; // Slowed from 4.5
         this.attackSpeed = 1.0; // Slower (was 0.6)
-        this.attackRange = 350;
+        this.attackRange = 500; // Buffed Range (User request)
 
         // Mechanics
         this.projectileRicochet = 3; // Bounces 3 times!
 
         // Projectile
-        this.projectileSpeed = 7; // Slowed from 14
+        this.projectileSpeed = 3.5; // Slowed significantly (was 7)
         this.projectileAOE = 0;
         this.projectileCount = 1;
 
@@ -34,7 +34,7 @@ export class Bard extends Player {
     performAttack(target) {
         // Musical Note
         // fireProjectile automatically handles this.projectileRicochet, which Bard sets in constructor
-        this.fireProjectile(target, Assets.generateNoteProjectile(), {
+        this.spawnProjectile(NoteProjectile, target, {
             range: this.attackRange
         });
     }

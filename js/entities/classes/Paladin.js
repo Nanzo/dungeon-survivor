@@ -1,6 +1,6 @@
 import { Player } from '../base/Player.js';
 import { Assets } from '../../core/Assets.js';
-import { Projectile } from '../../combat/Projectile.js';
+import { Hammer } from '../../combat/projectiles/Hammer.js';
 
 export class Paladin extends Player {
     constructor(game) {
@@ -8,14 +8,15 @@ export class Paladin extends Player {
         // Paladin Stats (Tanky, Sustain on Kill)
         this.maxHp = 150; // Highest HP
         this.hp = this.maxHp;
-        this.attackPower = 35; // Buffed from 15
-        this.defense = 8; // High Defense
+        this.attackPower = 25; // Nerfed from 35 (Too OP)
+        this.defense = 12; // Buffed from 8
+        // Removed damageReduction (User Request - moved to Warrior only)
         this.speed = 1.7; // Slowed from 3.0
-        this.attackSpeed = 1.8; // Slower (was 0.9)
+        this.attackSpeed = 1.5; // Faster (was 1.8)
         this.attackRange = 150; // Short/Mid Range (Hammer Throw)
 
         // Sustain
-        this.lifeOnKill = 5; // 5 HP per Kill
+        this.lifeOnKill = 10; // Buffed from 5
 
         // Projectile
         this.projectileSpeed = 5; // Slowed from 12
@@ -32,7 +33,7 @@ export class Paladin extends Player {
 
     performAttack(target) {
         // Hammer Throw
-        this.fireProjectile(target, Assets.generateHammerProjectile(), {
+        this.spawnProjectile(Hammer, target, {
             range: this.attackRange,
             knockback: 5 // Default high knockback for Hammer
         });

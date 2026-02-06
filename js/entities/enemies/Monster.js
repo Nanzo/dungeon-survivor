@@ -11,9 +11,12 @@ export class Monster extends Enemy {
         this.height = config.height || 40;
         this.color = config.color || "red"; // Fallback
 
+        // Boss Flag
+        this.isBoss = config.isBoss || false;
+
         // Asset Generation
         if (config.assetKey) {
-            this.image = Assets.getEnemyAsset(config.assetKey);
+            this.image = Assets.getEnemyAsset(config.assetKey, this.isBoss);
         } else if (config.assetFn) {
             this.image = config.assetFn();
         } else {
@@ -28,17 +31,37 @@ export class Monster extends Enemy {
         const dmgScale = config.dmgScale || 0.5; // Damage per level (slow growth)
 
         this.maxHp = (config.hp || 10) + ((level - 1) * hpScale);
-        this.hp = this.maxHp;
-
         this.attackPower = (config.damage || 5) + ((level - 1) * dmgScale);
-
         this.xpValue = (config.xp || 10) + ((level - 1) * xpScale);
+
+        // BOSS MULTIPLIERS
+        if (this.isBoss) {
+            this.width *= 3.0; // 3x Bigger
+            this.height *= 3.0;
+            this.maxHp *= 5.0;
+            this.attackPower *= 2.0;
+            this.xpValue *= 10.0;
+            this.name = "Giant " + this.name;
+
+            // Visual Flair (Darker, menacing)
+            // We can't easily change the image pixels without canvas manipulation,
+            // but we can add a filter if drawing, or just rely on size.
+            // Let's add a property 'filter' that Entity.draw could use?
+            // Or just modify color fallback.
+            this.color = "darkred";
+        }
+
+        this.hp = this.maxHp;
 
         // Speed is tricky. Some monsters shouldn't get faster.
         // We allow config to define 'speedGrowth' or fixed.
         // Let's cap speed growth to avoid unplayable kiting.
         const speedGrowth = config.speedGrowth || 0;
         this.speed = (config.speed || 2) + Math.min(2, (level - 1) * speedGrowth);
+
+        // Bosses are slightly slower to compensate for size? Or same speed.
+        // Let's keep same speed for now, maybe 0.9x if too fast.
+
         this.baseSpeed = this.speed;
 
         // Spawn Logic (Off-screen circle)

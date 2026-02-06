@@ -1,5 +1,6 @@
 import { Player } from '../base/Player.js';
 import { Assets } from '../../core/Assets.js';
+import { PoisonBolt } from '../../combat/projectiles/PoisonBolt.js';
 
 export class Warlock extends Player {
     constructor(game) {
@@ -9,7 +10,7 @@ export class Warlock extends Player {
         // Warlock Stats (Weak initial hit, Strong DoT)
         this.maxHp = 80;
         this.hp = this.maxHp;
-        this.attackPower = 5; // Weak initial hit
+        this.attackPower = 6; // Nerfed back to weak (was 10)
         this.defense = 0;
         this.speed = 1.8;
         this.attackSpeed = 1.0;
@@ -20,8 +21,8 @@ export class Warlock extends Player {
         this.projectileAOE = 0;
 
         // Poison Stats
-        // 5 dmg/tick (every 0.5s) for 3s = 6 ticks * 5 = 30 dmg total (+5 initial = 35 total)
-        this.poisonDamage = 5;
+        // 8 dmg/tick (every 0.5s) for 3s = 6 ticks * 8 = 48 dmg total
+        this.poisonDamage = 8;
         this.poisonDuration = 3000; // Milliseconds (was 3s)
 
         // UI Info
@@ -32,15 +33,10 @@ export class Warlock extends Player {
     // update() removed - uses Player.update()
 
     performAttack(target) {
-        const overrides = {
-            poisonDuration: this.poisonDuration, // Pass the duration
-            poisonDamage: this.poisonDamage      // Pass the dmg per tick
-        };
-
-        // Correct signature: target, image, overrides
-        console.log("Warlock Attacking...", target);
-        const asset = Assets.generatePoisonBolt();
-        console.log("Warlock Asset:", asset);
-        this.fireProjectile(target, asset, overrides);
+        // Correct Usage: spawnProjectile(Class, target, extras)
+        this.spawnProjectile(PoisonBolt, target, {
+            poisonDuration: this.poisonDuration, // Pass stats to be used by Projectile
+            poisonDamage: this.poisonDamage
+        });
     }
 }

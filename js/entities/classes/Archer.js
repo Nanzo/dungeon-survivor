@@ -1,6 +1,6 @@
 import { Player } from '../base/Player.js';
 import { Assets } from '../../core/Assets.js';
-import { Projectile } from '../../combat/Projectile.js';
+import { Arrow } from '../../combat/projectiles/Arrow.js';
 
 export class Archer extends Player {
     constructor(game) {
@@ -18,6 +18,10 @@ export class Archer extends Player {
         this.projectileSpeed = 10; // Slowed from 15
         this.projectileAOE = 0; // Single Target
 
+        // Base Slow Stats for Archer
+        this.slowPercent = 0.40; // 40% Slow Base
+        this.slowDuration = 1500; // 1.5s Duration (Standardized)
+
         // UI Info
         this.description = "A swift marksman with the longest range. Uses high speed and rapid fire to kite enemies from a safe distance.";
         this.roleDescription = "Ranged DPS / Kiter";
@@ -29,9 +33,7 @@ export class Archer extends Player {
 
     performAttack(target) {
         // Shoot Arrow (High Speed, Single Target)
-        this.fireProjectile(target, Assets.generateArrow(), {
-            slowPercent: 0.5, // 50% Slow (Buffed)
-            slowDuration: 2000 // 2 Seconds
-        });
+        // No overrides needed for slow, as they are now base stats
+        this.spawnProjectile(Arrow, target);
     }
 }
