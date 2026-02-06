@@ -130,13 +130,32 @@ window.addEventListener('load', function () {
             this.levelUpScreen.show();
         }
 
+        togglePause() {
+            this.isPaused = !this.isPaused;
+            const pauseMenu = document.getElementById('pauseMenu');
+            if (pauseMenu) {
+                pauseMenu.style.display = this.isPaused ? 'flex' : 'none';
+            }
+
+            // If we unpaused, reset lastTime to prevent jump
+            if (!this.isPaused) {
+                lastTime = performance.now();
+                animate(lastTime);
+            }
+        }
+
         gameOver() {
             this.isGameOver = true;
+            this.isPaused = true; // Ensure loop stops
 
             // Hide HUD
             if (this.hud && this.hud.container) {
                 this.hud.container.style.display = 'none';
             }
+
+            // Hide Pause Menu if open
+            const pauseMenu = document.getElementById('pauseMenu');
+            if (pauseMenu) pauseMenu.style.display = 'none';
 
             const goScreen = document.getElementById('gameOverScreen');
             const goClassIcon = document.getElementById('goClassIcon');
@@ -504,6 +523,47 @@ window.addEventListener('load', function () {
     const classPreviewModal = document.getElementById('classPreviewModal');
     const cpStartBtn = document.getElementById('cpStartBtn');
     const cpBackBtn = document.getElementById('cpBackBtn');
+
+    // Pause UI
+    const btnPause = document.getElementById('btnPause');
+    const pauseMenu = document.getElementById('pauseMenu');
+    const btnResume = document.getElementById('btnResume');
+    const btnForfeit = document.getElementById('btnForfeit');
+
+    if (btnPause) {
+        btnPause.addEventListener('click', () => {
+            if (game && !game.isGameOver) game.togglePause();
+        });
+    }
+
+    if (btnResume) {
+        btnResume.addEventListener('click', () => {
+            if (game) game.togglePause();
+        });
+    }
+
+    if (btnForfeit) {
+        btnForfeit.addEventListener('click', () => {
+            if (game) {
+                // Unpause UI but set Game Over
+                if (pauseMenu) pauseMenu.style.display = 'none';
+                game.gameOver();
+            }
+        });
+    }
+
+    // Keyboard shortcut P or ESC
+    window.addEventListener('keydown', (e) => {
+        if ((e.key === 'p' || e.key === 'P' || e.key === 'Escape') && game && !game.isGameOver) {
+            // If LevelUp screen is open, Escape might close it? No, LevelUp is mandatory.
+            // Only toggle pause if not leveling up? 
+            // Logic: togglePause sets isPaused. LevelUp also sets isPaused. 
+            // We need a separate state or just handle UI based on what's open.
+            // For now, simple toggle.
+            if (game.levelUpScreen && game.levelUpScreen.element.style.display !== 'none') return; // Don't allow double pause on level up
+            game.togglePause();
+        }
+    });
 
     let selectedClassType = 'warrior';
 

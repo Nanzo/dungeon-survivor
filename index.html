@@ -57,7 +57,8 @@
             <button id="btnNecromancer" class="class-btn"
                 style="border-color: #2A0A3B; color: #EEE;">Necromancer</button>
             <button id="btnDruid" class="class-btn" style="border-color: #556B2F; color: #EEE;">Druid</button>
-            <button id="btnGod" class="class-btn" style="border-color: gold; color: gold; font-weight: bold;">GOD MODE</button>
+            <button id="btnGod" class="class-btn" style="border-color: gold; color: gold; font-weight: bold;">GOD
+                MODE</button>
         </div>
     </div>
 
@@ -183,6 +184,28 @@
                     <div>Ex. Strikes: <span id="hudDbl" style="color: #FF8C00; float: right;">0</span></div>
                 </div>
             </div>
+        </div>
+
+        <!-- Pause Button -->
+        <button id="btnPause"
+            style="position: absolute; top: 20px; right: 20px; width: 50px; height: 50px; background: rgba(0,0,0,0.6); border: 2px solid #666; color: white; border-radius: 8px; font-size: 24px; cursor: pointer; pointer-events: auto;">
+            ⏸
+        </button>
+
+        <!-- Pause Menu Overlay -->
+        <div id="pauseMenu"
+            style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); flex-direction: column; align-items: center; justify-content: center; z-index: 100; pointer-events: auto;">
+            <h1 style="color: white; font-size: 4em; margin-bottom: 40px; text-shadow: 0 0 10px #000;">PAUSED</h1>
+
+            <button id="btnResume"
+                style="padding: 15px 40px; font-size: 1.5em; background: #2E8B57; color: white; border: 2px solid #4CAF50; border-radius: 8px; cursor: pointer; margin-bottom: 20px; width: 300px;">
+                Continue
+            </button>
+
+            <button id="btnForfeit"
+                style="padding: 15px 40px; font-size: 1.5em; background: #800; color: white; border: 2px solid #a00; border-radius: 8px; cursor: pointer; width: 300px;">
+                Give Up / End Run
+            </button>
         </div>
 
         <!-- XP Bar -->
