@@ -14,53 +14,109 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.9);
-            display: flex;
-            flex-direction: column;
+            /* Grid Layout */
+            display: grid;
+            grid-template-columns: repeat(4, 260px);
+            /* Increased width for long names */
+            /* 4 Columns, fixed width to ensure centering/borders */
+            gap: 20px;
             justify-content: center;
-            align-items: center;
+            /* Center the grid horizontally */
+            align-content: center;
+            /* Center the grid vertically */
+            padding: 50px;
             color: white;
             z-index: 1000;
         }
 
         .class-btn {
+            font-size: 18px;
+            /* Slightly smaller to fit */
+            width: 100%;
+            /* Fill grid cell */
+            height: 80px;
+            /* Fixed height */
+            cursor: pointer;
+            background: #333;
+            color: white;
+            border: 2px solid #888;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        }
+
+        .class-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.7);
+            filter: brightness(1.2);
+        }
+
+        /* Menu Buttons */
+        .menu-btn {
             font-size: 24px;
-            padding: 20px 40px;
-            margin: 20px;
+            padding: 15px 50px;
+            margin: 15px;
             cursor: pointer;
             background: #444;
             color: white;
             border: 2px solid #888;
-            border-radius: 10px;
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+            transition: background 0.2s;
         }
 
-        .class-btn:hover {
+        .menu-btn:hover {
             background: #666;
+            color: gold;
+            border-color: gold;
         }
     </style>
 </head>
 
 <body>
-    <div id="selectionScreen">
-        <h1>Choose Your Hero</h1>
-        <div>
-            <button id="btnWarrior" class="class-btn">Warrior</button>
-            <button id="btnMage" class="class-btn" style="border-color: #4B0082;">Mage</button>
-            <button id="btnArcher" class="class-btn" style="border-color: #2E8B57;">Archer</button>
-            <button id="btnAssassin" class="class-btn" style="border-color: #212121;">Assassin</button>
-            <button id="btnBarbarian" class="class-btn" style="border-color: #E65100;">Barbarian</button>
-            <button id="btnGunslinger" class="class-btn" style="border-color: #37474F;">Gunslinger</button>
-            <button id="btnIceMage" class="class-btn" style="border-color: #00ACC1;">Ice Mage</button>
-            <button id="btnCleric" class="class-btn" style="border-color: #FFF; color: #EEE;">Cleric</button>
-            <button id="btnPaladin" class="class-btn" style="border-color: #C0C0C0; color: #EEE;">Paladin</button>
-            <button id="btnBard" class="class-btn" style="border-color: #9400D3; color: #EEE;">Bard</button>
-            <button id="btnMonk" class="class-btn" style="border-color: #FF8C00; color: #EEE;">Monk</button>
-            <button id="btnNecromancer" class="class-btn"
-                style="border-color: #2A0A3B; color: #EEE;">Necromancer</button>
-            <button id="btnDruid" class="class-btn" style="border-color: #556B2F; color: #EEE;">Druid</button>
-            <button id="btnWarlock" class="class-btn" style="border-color: #4B0082; color: #d8f;">Warlock</button>
-            <button id="btnGod" class="class-btn" style="border-color: gold; color: gold; font-weight: bold;">GOD
-                MODE</button>
-        </div>
+    <!-- Main Menu -->
+    <div id="mainMenu"
+        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(0,0,0,0.8), #1a1a1a); display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 1000;">
+        <h1 style="font-size: 5em; margin-bottom: 50px; text-shadow: 0 0 20px black; color: gold;">Dungeon Survivor</h1>
+
+        <button id="btnPlayNow" class="menu-btn">Play Now</button>
+        <button id="btnAbout" class="menu-btn">About</button>
+    </div>
+
+    <!-- About Screen -->
+    <div id="aboutScreen"
+        style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #111; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 1000;">
+        <h1 style="color: #ccc; margin-bottom: 20px;">About</h1>
+        <p style="font-size: 2em; margin-bottom: 50px; color: cyan;">Created by Nanzo</p>
+        <button id="btnAboutBack" class="menu-btn">Back</button>
+    </div>
+
+    <!-- Selection Screen -->
+    <div id="selectionScreen" style="display: none;">
+        <h1 style="grid-column: 1 / -1; text-align: center; margin-bottom: 20px; font-size: 3em;">Choose Your Hero</h1>
+
+        <!-- Buttons sorted Alphabetically -->
+        <button id="btnArcher" class="class-btn" style="border-color: #2E8B57;">Archer</button>
+        <button id="btnAssassin" class="class-btn" style="border-color: #212121;">Assassin</button>
+        <button id="btnBarbarian" class="class-btn" style="border-color: #E65100;">Barbarian</button>
+        <button id="btnBard" class="class-btn" style="border-color: #9400D3; color: #EEE;">Bard</button>
+        <button id="btnCleric" class="class-btn" style="border-color: #FFF; color: #EEE;">Cleric</button>
+        <button id="btnDruid" class="class-btn" style="border-color: #556B2F; color: #EEE;">Druid</button>
+        <!-- <button id="btnGod" class="class-btn" style="border-color: gold; color: gold; font-weight: bold;">GOD MODE</button> -->
+        <button id="btnGunslinger" class="class-btn" style="border-color: #37474F;">Gunslinger</button>
+        <button id="btnIceMage" class="class-btn" style="border-color: #00ACC1;">Ice Mage</button>
+        <button id="btnMage" class="class-btn" style="border-color: #4B0082;">Mage</button>
+        <button id="btnMonk" class="class-btn" style="border-color: #FF8C00; color: #EEE;">Monk</button>
+        <button id="btnNecromancer" class="class-btn" style="border-color: #2A0A3B; color: #EEE;">Necromancer</button>
+        <button id="btnPaladin" class="class-btn" style="border-color: #C0C0C0; color: #EEE;">Paladin</button>
+        <button id="btnWarlock" class="class-btn" style="border-color: #4B0082; color: #d8f;">Warlock</button>
+        <button id="btnWarrior" class="class-btn">Warrior</button>
     </div>
 
     <!-- Class Preview Modal -->
@@ -183,6 +239,7 @@
                     <div>LoK: <span id="hudLoK" style="color: #8f8; float: right;">0</span></div>
                     <div>Ricochet: <span id="hudRicochet" style="color: #FF1493; float: right;">0</span></div>
                     <div>Ex. Strikes: <span id="hudDbl" style="color: #FF8C00; float: right;">0</span></div>
+                    <div>Poison: <span id="hudPoison" style="color: #32CD32; float: right;">0</span></div>
                 </div>
             </div>
         </div>
