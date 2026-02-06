@@ -58,6 +58,9 @@ export class Monster extends Enemy {
         // AI: Chase Nearest Hero (Player or Minion)
         const target = this.findNearestHero();
         if (target) {
+            // Check Freeze (Redundant but necessary if super.update returns early)
+            if (this.isFrozen) return;
+
             const dx = target.x - this.x;
             const dy = target.y - this.y;
             const distance = Math.hypot(dx, dy);

@@ -8,10 +8,10 @@ export class Cleric extends Player {
         // Cleric Stats (Durable Caster)
         this.maxHp = 120;
         this.hp = this.maxHp;
-        this.attackPower = 12;
+        this.attackPower = 25; // Buffed from 12
         this.defense = 3;
         this.speed = 1.6; // Slowed from 3.5 (Wait, 3.5 was very fast for Cleric!)
-        this.attackSpeed = 1.5; // Slower (was 0.8)
+        this.attackSpeed = 1.0; // Faster (was 1.5)
         this.attackRange = 400; // Mid-Long Range
 
         // Sustain
@@ -36,24 +36,8 @@ export class Cleric extends Player {
 
     performAttack(target) {
         // Holy Bolt
-        const projectile = new Projectile(
-            this.game,
-            this.x, this.y,
-            target,
-            this.projectileSpeed,
-            this.attackPower,
-            this.projectileAOE,
-            Assets.generateHolyBolt(),
-            this.attackRange
-        );
-        // Sync Upgrades
-        if (this.projectileRicochet) {
-            projectile.ricochetCount = this.projectileRicochet;
-            projectile.ricochetRange = 250;
-        }
-        if (this.piercing) projectile.piercing = true;
-        if (this.knockback) projectile.knockback = this.knockback;
-
-        this.game.projectiles.push(projectile);
+        this.fireProjectile(target, Assets.generateHolyBolt(), {
+            range: this.attackRange
+        });
     }
 }

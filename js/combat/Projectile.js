@@ -21,6 +21,8 @@ export class Projectile {
         this.slowPercent = 0; // New prop
         this.slowDuration = 0; // New prop
         this.freezeDuration = 0; // New prop
+        this.poisonDuration = 0; // New prop
+        this.poisonDamage = 0; // New prop
         this.isCrit = isCrit;
         this.maxRange = maxRange;
         this.hitList = new Set(); // Track enemies hit by this piercing/ricocheting projectile
@@ -164,6 +166,7 @@ export class Projectile {
         if (this.knockback > 0) enemy.applyKnockback(this.knockback, this.x, this.y); // Source is projectile pos
         if (this.freezeDuration > 0) enemy.applyFreeze(this.freezeDuration);
         if (this.slowPercent > 0) enemy.applySlow(this.slowDuration, this.slowPercent);
+        if (this.poisonDuration > 0) enemy.applyPoison(this.poisonDuration, this.poisonDamage);
     }
 
     explode(directHitTarget = null) {

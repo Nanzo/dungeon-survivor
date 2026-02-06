@@ -261,53 +261,13 @@ export class Minion extends Entity {
     }
 
     performAttack(target) {
-        // Melee Hit
-
-        // Critical Hit Check
-        const isCrit = Math.random() < this.critChance;
-        let dmg = this.attackPower;
-        if (isCrit) dmg *= this.critDamage;
-
-        // Apply Damage to Primary
-        // Armor Pen (Pierce)
-        if (this.piercing) {
-            // Ignore Defense (or highly reduce it)
-            // Entity.takeDamage subtracts defense? No, Entity.js performAttack calculates dmg = atk - def.
-            // Minion.performAttack calculates 'dmg' here.
-            // Entity.takeDamage just subtracts HP.
-            // So we just don't subtract defense here?
-            // Wait, where is Defense subtracted?
-            // Entity.js: performAttack(target) { const damage = this.attackPower - target.defense; target.takeDamage(damage); }
-            // Minion.js currently does: let dmg = this.attackPower; ... target.takeDamage(dmg);
-            // It DOES NOT subtract defense! Minions already have 100% Armor Pen?!
-            // Let's check Entity.js again.
-            // Yes, Entity.js calculates net damage BEFORE sending to takeDamage.
-            // Minion.js is calculating 'dmg' then sending.
-            // Unless 'target.takeDamage' subtracts defense?
-            // Entity.takeDamage(amount) { this.hp -= amount; }
-            // So YES, MINIONS CURRENTLY IGNORE DEFENSE BY DEFAULT. 
-            // That's a bug or feature.
-            // Let's implement Defense subtraction if !piercing.
-        }
-
-        // Correct Logic:
-        let damageToDeal = dmg;
-        if (!this.piercing) {
-            damageToDeal = Math.max(1, dmg - target.defense);
-        }
-
-        target.takeDamage(damageToDeal, isCrit);
-
-        // Hit Effects
-        if (this.knockback > 0) target.applyKnockback(this.knockback, this.x, this.y);
-        if (this.freezeDuration > 0) target.applyFreeze(this.freezeDuration);
+        // Melee Hit (Primary)
+        this.applyAttackToTarget(target, 1.0, true);
 
         // EXPLOSIONS (AOE)
         if (this.projectileAOE > 0) {
             if (this.game.addExplosion) this.game.addExplosion(target.x + target.width / 2, target.y + target.height / 2, this.projectileAOE);
-            // AOE Damage logic (Simplified: Explosion visual + damage friends? No, Entity.js doesn't have AreaDamage)
-            // We need to loop enemies for AOE
-            this.dealAreaDamage(target.x, target.y, this.projectileAOE, dmg * 0.5); // 50% splash
+            this.dealAreaDamage(target.x, target.y, this.projectileAOE, 0.5); // 50% splash damage
         }
 
         // CLEAVE (Ricochet)
@@ -320,29 +280,56 @@ export class Minion extends Entity {
 
                 const dist = Math.hypot(enemy.x - target.x, enemy.y - target.y);
                 if (dist < 100) { // Cleave radius
-                    enemy.takeDamage(dmg, isCrit);
+                    this.applyAttackToTarget(enemy, 1.0, false); // Full damage cleave? Or partial? Assuming full based on "Ricochet" usually implies full hit or slightly reduced on bounce. Let's keep 1.0 for now as previously it was full dmg.
                     cleaveCount++;
                 }
             }
         }
 
         // Life On Kill (Heal Minion)
+        // Note: This logic is slightly flawed because if AOE kills, we might miss it here?
+        // But checking target.hp <= 0 handles primary target kill.
         if (target.hp <= 0 && this.lifeOnKill > 0) {
             this.heal(this.lifeOnKill);
         }
     }
 
-    dealAreaDamage(x, y, radius, damage) {
+    applyAttackToTarget(target, damageMult = 1.0, isPrimary = false) {
+        // Critical Hit Check
+        const isCrit = Math.random() < this.critChance;
+        let dmg = this.attackPower * damageMult;
+        if (isCrit) dmg *= this.critDamage;
+
+        // Damage Calculation
+        let damageToDeal = dmg;
+        if (!this.piercing) {
+            // Subtract defense if not piercing
+            damageToDeal = Math.max(1, dmg - target.defense);
+        }
+
+        // Deal Damage
+        target.takeDamage(damageToDeal, isCrit);
+
+        // Apply Status Effects (Proc Everything!)
+        if (this.knockback > 0) target.applyKnockback(this.knockback, this.x, this.y);
+        if (this.freezeDuration > 0) target.applyFreeze(this.freezeDuration);
+        // Add Slow if minions eventually get it (Projectile has it, Minion might inherit)
+        if (this.slowPercent > 0) target.applySlow(this.slowDuration || 2000, this.slowPercent || 0.3);
+    }
+
+    dealAreaDamage(x, y, radius, damageMult) {
         for (const enemy of this.game.enemies) {
             const dist = Math.hypot(enemy.x - x, enemy.y - y);
             if (dist < radius) {
-                enemy.takeDamage(damage);
+                // Apply everything!
+                this.applyAttackToTarget(enemy, damageMult, false);
             }
         }
     }
 
     heal(amount) {
+        if (this.hp >= this.maxHp) return;
         this.hp = Math.min(this.maxHp, this.hp + amount);
-        this.game.showDamage(this.x, this.y - 20, "+" + Math.ceil(amount), false); // Green text check?
+        this.game.showHeal(this.x, this.y - 20, Math.ceil(amount));
     }
 }

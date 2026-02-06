@@ -12,6 +12,8 @@ import { Bard } from './entities/classes/Bard.js';
 import { Monk } from './entities/classes/Monk.js';
 import { Necromancer } from './entities/classes/Necromancer.js';
 import { Druid } from './entities/classes/Druid.js';
+import { Warlock } from './entities/classes/Warlock.js';
+import { God } from './entities/classes/God.js';
 import { Map } from './world/Map.js?v=3';
 import { Rat } from './entities/enemies/Rat.js';
 import { Monster } from './entities/enemies/Monster.js';
@@ -70,6 +72,10 @@ window.addEventListener('load', function () {
                 this.player = new Necromancer(this);
             } else if (classType === 'druid') {
                 this.player = new Druid(this);
+            } else if (classType === 'warlock') {
+                this.player = new Warlock(this);
+            } else if (classType === 'god') {
+                this.player = new God(this);
             } else {
                 this.player = new Warrior(this);
             }
@@ -127,13 +133,32 @@ window.addEventListener('load', function () {
             this.levelUpScreen.show();
         }
 
+        togglePause() {
+            this.isPaused = !this.isPaused;
+            const pauseMenu = document.getElementById('pauseMenu');
+            if (pauseMenu) {
+                pauseMenu.style.display = this.isPaused ? 'flex' : 'none';
+            }
+
+            // If we unpaused, reset lastTime to prevent jump
+            if (!this.isPaused) {
+                lastTime = performance.now();
+                animate(lastTime);
+            }
+        }
+
         gameOver() {
             this.isGameOver = true;
+            this.isPaused = true; // Ensure loop stops
 
             // Hide HUD
             if (this.hud && this.hud.container) {
                 this.hud.container.style.display = 'none';
             }
+
+            // Hide Pause Menu if open
+            const pauseMenu = document.getElementById('pauseMenu');
+            if (pauseMenu) pauseMenu.style.display = 'none';
 
             const goScreen = document.getElementById('gameOverScreen');
             const goClassIcon = document.getElementById('goClassIcon');
@@ -337,6 +362,14 @@ window.addEventListener('load', function () {
             this.hud.ricochet.innerText = (this.player.projectileRicochet > 0) ? this.player.projectileRicochet : "0";
             this.hud.doubleStrike.innerText = this.player.extraStrikes > 0 ? ("+" + this.player.extraStrikes) : "0";
 
+            // Poison HUD
+            if (this.player.poisonDuration > 0) {
+                this.hud.container.querySelector('#hudPoison').innerText = `${this.player.poisonDamage}/tick`;
+                this.hud.container.querySelector('#hudPoison').parentNode.style.display = 'block';
+            } else {
+                this.hud.container.querySelector('#hudPoison').parentNode.style.display = 'none';
+            }
+
             // XP Bar
             const xpPercent = Math.min(100, Math.max(0, (this.player.xp / this.player.nextLevelXp) * 100));
             this.hud.xpFill.style.width = `${xpPercent}%`;
@@ -359,8 +392,16 @@ window.addEventListener('load', function () {
             ctx.restore();
         }
 
-        showDamage(x, y, amount, isCrit = false) {
-            this.floatingTexts.push(new FloatingText(amount, x, y, isCrit));
+        showDamage(x, y, amount, isCrit = false, color = '#fff', offsetY = 0) {
+            // Damage = Color (Default White) or Gold (Crit)
+            const finalColor = isCrit ? '#FFD700' : color;
+
+            this.floatingTexts.push(new FloatingText(amount, x, y + offsetY, finalColor, isCrit));
+        }
+
+        showHeal(x, y, amount) {
+            // Heal = Green
+            this.floatingTexts.push(new FloatingText("+" + amount, x, y, '#44ff44', false));
         }
 
         addExplosion(x, y, radius) {
@@ -477,6 +518,18 @@ window.addEventListener('load', function () {
         druidIcon.style.verticalAlign = 'middle';
     }
 
+    const warlockBtn = document.getElementById('btnWarlock');
+    if (warlockBtn) {
+        const warlockIcon = Assets.generateWarlock();
+        warlockBtn.prepend(warlockIcon);
+        warlockIcon.style.marginRight = '15px';
+        warlockIcon.style.verticalAlign = 'middle';
+    }
+
+    const godBtn = document.getElementById('btnGod');
+    // God button listener - Skip Preview, Start Immediately
+    if (godBtn) godBtn.addEventListener('click', () => startGame('god'));
+
 
     function startGame(classType) {
         if (selectionScreen) {
@@ -490,6 +543,47 @@ window.addEventListener('load', function () {
     const classPreviewModal = document.getElementById('classPreviewModal');
     const cpStartBtn = document.getElementById('cpStartBtn');
     const cpBackBtn = document.getElementById('cpBackBtn');
+
+    // Pause UI
+    const btnPause = document.getElementById('btnPause');
+    const pauseMenu = document.getElementById('pauseMenu');
+    const btnResume = document.getElementById('btnResume');
+    const btnForfeit = document.getElementById('btnForfeit');
+
+    if (btnPause) {
+        btnPause.addEventListener('click', () => {
+            if (game && !game.isGameOver) game.togglePause();
+        });
+    }
+
+    if (btnResume) {
+        btnResume.addEventListener('click', () => {
+            if (game) game.togglePause();
+        });
+    }
+
+    if (btnForfeit) {
+        btnForfeit.addEventListener('click', () => {
+            if (game) {
+                // Unpause UI but set Game Over
+                if (pauseMenu) pauseMenu.style.display = 'none';
+                game.gameOver();
+            }
+        });
+    }
+
+    // Keyboard shortcut P or ESC
+    window.addEventListener('keydown', (e) => {
+        if ((e.key === 'p' || e.key === 'P' || e.key === 'Escape') && game && !game.isGameOver) {
+            // If LevelUp screen is open, Escape might close it? No, LevelUp is mandatory.
+            // Only toggle pause if not leveling up? 
+            // Logic: togglePause sets isPaused. LevelUp also sets isPaused. 
+            // We need a separate state or just handle UI based on what's open.
+            // For now, simple toggle.
+            if (game.levelUpScreen && game.levelUpScreen.element.style.display !== 'none') return; // Don't allow double pause on level up
+            game.togglePause();
+        }
+    });
 
     let selectedClassType = 'warrior';
 
@@ -512,6 +606,7 @@ window.addEventListener('load', function () {
         else if (classType === 'monk') dummyPlayer = new Monk(dummyGame);
         else if (classType === 'necromancer') dummyPlayer = new Necromancer(dummyGame);
         else if (classType === 'druid') dummyPlayer = new Druid(dummyGame);
+        else if (classType === 'warlock') dummyPlayer = new Warlock(dummyGame);
         else dummyPlayer = new Warrior(dummyGame);
 
         // Populate UI
@@ -564,6 +659,15 @@ window.addEventListener('load', function () {
         // Ideally we move these props to the player class itself.
         if (dummyPlayer.freezeDuration > 0) specialTraits.push({ name: 'Freeze', val: (dummyPlayer.freezeDuration / 1000).toFixed(1) + 's', color: '#00ACC1' });
 
+        // Warlock Poison
+        if (dummyPlayer.poisonDuration > 0) {
+            specialTraits.push({
+                name: 'Poison',
+                val: `${dummyPlayer.poisonDamage} dmg/tick`,
+                color: '#32CD32'
+            });
+        }
+
         // Archer Slow (Hack for now as it's not on "this" but on projectile logic)
         if (dummyPlayer.constructor.name === 'Archer') specialTraits.push({ name: 'Slow', val: '30%', color: '#ffa' });
 
@@ -599,6 +703,7 @@ window.addEventListener('load', function () {
     if (monkBtn) monkBtn.addEventListener('click', () => showClassPreview('monk'));
     if (necroBtn) necroBtn.addEventListener('click', () => showClassPreview('necromancer'));
     if (druidBtn) druidBtn.addEventListener('click', () => showClassPreview('druid'));
+    if (warlockBtn) warlockBtn.addEventListener('click', () => showClassPreview('warlock'));
 
     if (cpBackBtn) {
         cpBackBtn.addEventListener('click', () => {

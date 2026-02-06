@@ -8,7 +8,7 @@ export class Monk extends Player {
         // Monk Stats (Fast, Combo-based)
         this.maxHp = 110; // Slightly tanky
         this.hp = this.maxHp;
-        this.attackPower = 12; // Lower base dmg, but hits twice!
+        this.attackPower = 18; // Buffed from 12
         this.defense = 3;
         this.speed = 3.5; // Fast
         this.attackSpeed = 0.9; // Fast attacks
@@ -36,24 +36,6 @@ export class Monk extends Player {
 
     performAttack(target) {
         // Fist Projectile
-        const projectile = new Projectile(
-            this.game,
-            this.x, this.y,
-            target,
-            this.projectileSpeed,
-            this.attackPower,
-            this.projectileAOE,
-            Assets.generateFist() // Monk Fist
-        );
-
-        // Standard sync (always good practice now)
-        if (this.projectileRicochet) {
-            projectile.ricochetCount = this.projectileRicochet;
-            projectile.ricochetRange = 250;
-        }
-        if (this.piercing) projectile.piercing = true;
-        if (this.knockback) projectile.knockback = this.knockback;
-
-        this.game.projectiles.push(projectile);
+        this.fireProjectile(target, Assets.generateFist());
     }
 }

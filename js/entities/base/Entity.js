@@ -19,6 +19,7 @@ export class Entity {
 
         this.markedForDeletion = false;
         this.image = null;
+        this.damageTextColor = '#fff'; // Default damage text color (White for enemies)
     }
 
     update(deltaTime) {
@@ -73,30 +74,19 @@ export class Entity {
                 });
 
                 // 3. Fire Projectiles
-                const count = this.projectileCount || 1; // Default to 1 if not set
+                const count = this.projectileCount || 1;
 
                 const fireVolley = () => {
-                    for (let i = 0; i < count; i++) {
-                        let target = null;
+                    // New "Multishot" Logic:
+                    // Fire at 'count' unique targets (closest first).
+                    // If we have fewer targets than projectiles, we simply fire fewer projectiles.
+                    // This prevents "shotgunning" single targets with Multishot (User request).
 
-                        if (i === 0) {
-                            // First shot always goes to closest
-                            target = targetsInRange[0];
-                        } else {
-                            // Subsequent shots pick random target from range
-                            if (targetsInRange.length > 1) {
-                                const otherTargets = targetsInRange.slice(1);
-                                const randomIndex = Math.floor(Math.random() * otherTargets.length);
-                                target = otherTargets[randomIndex];
-                            } else {
-                                target = targetsInRange[0];
-                            }
-                        }
+                    const targetsToHit = targetsInRange.slice(0, count);
 
-                        if (target) {
-                            this.performAttack(target);
-                        }
-                    }
+                    targetsToHit.forEach(target => {
+                        this.performAttack(target);
+                    });
                 };
 
                 // Immediate Volley
@@ -125,13 +115,14 @@ export class Entity {
         target.takeDamage(damage);
     }
 
-    takeDamage(amount, isCrit = false) {
+    takeDamage(amount, isCrit = false, colorOverride = null, offsetY = 0) {
         this.hp -= amount;
         if (this.hp <= 0) {
             this.hp = 0;
             this.markedForDeletion = true; // For enemies
         }
-        this.game.showDamage(this.x + this.width / 2, this.y, Math.round(amount), isCrit);
+        const color = colorOverride || this.damageTextColor;
+        this.game.showDamage(this.x + this.width / 2, this.y, Math.round(amount), isCrit, color, offsetY);
     }
 
     applyKnockback(force, sourceX, sourceY) {

@@ -14,7 +14,7 @@ export class Barbarian extends Player {
         // Wait, Warrior is 2.5, Mage 1.8, Archer 3.0. 
         // Barbarian "Average" would be around 2.2? 
         this.speed = 1.8; // Slowed from 2.2
-        this.attackSpeed = 1.8; // Slower (was 0.8)
+        this.attackSpeed = 1.1; // Faster (was 1.8)
         this.attackRange = 250; // Throwing Range (Mid)
 
         // Projectile / Ability Stats
@@ -36,26 +36,7 @@ export class Barbarian extends Player {
 
     performAttack(target) {
         // Throw Axe
-        // New Projectile Params: game, x, y, target, speed, dmg, aoe, image, maxRange, piercing
-        const projectile = new Projectile(
-            this.game,
-            this.x, this.y,
-            target,
-            this.projectileSpeed,
-            this.attackPower,
-            this.projectileAOE,
-            Assets.generateAxe(),
-            1000,
-            this.piercing // Pass Piercing param
-        );
-
-        // Sync Upgrades
-        if (this.projectileRicochet) {
-            projectile.ricochetCount = this.projectileRicochet;
-            projectile.ricochetRange = 250;
-        }
-        if (this.knockback) projectile.knockback = this.knockback;
-
-        this.game.projectiles.push(projectile);
+        // Barbarian has this.piercing = true in constructor, so fireProjectile picks it up automatically!
+        this.fireProjectile(target, Assets.generateAxe());
     }
 }

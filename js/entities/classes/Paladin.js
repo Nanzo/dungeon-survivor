@@ -8,7 +8,7 @@ export class Paladin extends Player {
         // Paladin Stats (Tanky, Sustain on Kill)
         this.maxHp = 150; // Highest HP
         this.hp = this.maxHp;
-        this.attackPower = 15;
+        this.attackPower = 35; // Buffed from 15
         this.defense = 8; // High Defense
         this.speed = 1.7; // Slowed from 3.0
         this.attackSpeed = 1.8; // Slower (was 0.9)
@@ -35,26 +35,9 @@ export class Paladin extends Player {
 
     performAttack(target) {
         // Hammer Throw
-        const projectile = new Projectile(
-            this.game,
-            this.x, this.y,
-            target,
-            this.projectileSpeed,
-            this.attackPower,
-            this.projectileAOE,
-            Assets.generateHammerProjectile(),
-            this.attackRange,
-            false,
-            5 // Base Knockback
-        );
-        // Sync Upgrades
-        if (this.projectileRicochet) {
-            projectile.ricochetCount = this.projectileRicochet;
-            projectile.ricochetRange = 250;
-        }
-        if (this.piercing) projectile.piercing = true;
-        if (this.knockback) projectile.knockback = this.knockback;
-
-        this.game.projectiles.push(projectile);
+        this.fireProjectile(target, Assets.generateHammerProjectile(), {
+            range: this.attackRange,
+            knockback: 5 // Default high knockback for Hammer
+        });
     }
 }

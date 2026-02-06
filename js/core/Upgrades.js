@@ -96,10 +96,10 @@ export const Upgrades = [
     {
         id: 'knockback',
         name: 'Heavy Impact',
-        description: 'Increase Knockback by 5',
+        description: 'Increase Knockback by 25',
         rarity: 'rare',
         apply: (player) => {
-            player.knockback = (player.knockback || 0) + 5;
+            player.knockback = (player.knockback || 0) + 25;
             console.log(`Knockback Upgraded! New Knockback: ${player.knockback}`);
         }
     },
@@ -109,10 +109,8 @@ export const Upgrades = [
         description: '+0.5s Freeze Duration',
         rarity: 'rare',
         apply: (player) => {
-            if (player.freezeDuration) {
-                player.freezeDuration += 500;
-                console.log(`Freeze Upgraded! New Duration: ${player.freezeDuration}ms`);
-            }
+            player.freezeDuration = (player.freezeDuration || 0) + 500;
+            console.log(`Freeze Upgraded! New Duration: ${player.freezeDuration}ms`);
         }
     },
     {
@@ -174,10 +172,47 @@ export const Upgrades = [
             player.extraStrikes = (player.extraStrikes || 0) + 1;
             console.log(`Combo Strike Upgraded! Total Extra Strikes: ${player.extraStrikes}`);
         }
+    },
+    {
+        id: 'piercing_rounds',
+        name: 'Piercing Rounds',
+        description: 'Projectiles pass through enemies',
+        rarity: 'rare',
+        condition: (player) => !player.piercing, // Only if not already owned
+        apply: (player) => {
+            player.piercing = true;
+            console.log(`Piercing Upgraded!`);
+        }
+    },
+    {
+        id: 'venom_strike',
+        name: 'Venomous Strike',
+        description: 'Attacks apply Poison (3 dmg/s for 3s)',
+        rarity: 'uncommon',
+        apply: (player) => {
+            // If player already has poison, buff it?
+            // Or just set it if not present.
+            if (player.poisonDuration > 0) {
+                player.poisonDamage += 2;
+                console.log(`Poison Buffed! New Tick Dmg: ${player.poisonDamage}`);
+            } else {
+                player.poisonDuration = 3;
+                player.poisonDamage = 3; // Weaker than Warlock base
+                console.log(`Poison Added!`);
+            }
+        }
     }
 ];
 
-export function getRandomUpgrades(count) {
-    const shuffled = [...Upgrades].sort(() => 0.5 - Math.random());
+export function getRandomUpgrades(count, player) {
+    // Filter upgrades based on condition (if exists)
+    const available = Upgrades.filter(u => {
+        if (u.condition && player) {
+            return u.condition(player);
+        }
+        return true;
+    });
+
+    const shuffled = [...available].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, count);
 }

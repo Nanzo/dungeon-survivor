@@ -17,7 +17,7 @@ export class IceMage extends Player {
         // Projectile / Ability Stats
         this.projectileSpeed = 4.5; // Slowed from 12
         this.projectileAOE = 60; // Same AOE as Fire Mage
-        this.freezeDuration = 1000; // 1 second Freeze
+        this.freezeDuration = 1500; // 1.5 second Freeze
 
         // UI Info
         this.description = "A cryomancer who freezes enemies in their tracks. Lower damage but unmatched crowd control.";
@@ -32,26 +32,8 @@ export class IceMage extends Player {
     }
 
     performAttack(target) {
-        const projectile = new Projectile(
-            this.game,
-            this.x, this.y,
-            target,
-            this.projectileSpeed,
-            this.attackPower,
-            this.projectileAOE,
-            Assets.generateIceShard()
-        );
-        // Apply Freeze Stats
-        projectile.freezeDuration = this.freezeDuration;
-
-        // Sync Upgrades
-        if (this.projectileRicochet) {
-            projectile.ricochetCount = this.projectileRicochet;
-            projectile.ricochetRange = 250;
-        }
-        if (this.piercing) projectile.piercing = true;
-        if (this.knockback) projectile.knockback = this.knockback;
-
-        this.game.projectiles.push(projectile);
+        // Shoot Ice Shard
+        // Uses base freezeDuration synced in fireProjectile
+        this.fireProjectile(target, Assets.generateIceShard());
     }
 }
