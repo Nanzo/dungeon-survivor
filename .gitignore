@@ -1,0 +1,12 @@
+# System files
+thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# VS Code
+.vscode/
+
+# Node/NPM (if we add dependencies later)
+node_modules/
+npm-debug.log
