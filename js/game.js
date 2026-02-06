@@ -362,6 +362,14 @@ window.addEventListener('load', function () {
             this.hud.ricochet.innerText = (this.player.projectileRicochet > 0) ? this.player.projectileRicochet : "0";
             this.hud.doubleStrike.innerText = this.player.extraStrikes > 0 ? ("+" + this.player.extraStrikes) : "0";
 
+            // Poison HUD
+            if (this.player.poisonDuration > 0) {
+                this.hud.container.querySelector('#hudPoison').innerText = `${this.player.poisonDamage}/tick`;
+                this.hud.container.querySelector('#hudPoison').parentNode.style.display = 'block';
+            } else {
+                this.hud.container.querySelector('#hudPoison').parentNode.style.display = 'none';
+            }
+
             // XP Bar
             const xpPercent = Math.min(100, Math.max(0, (this.player.xp / this.player.nextLevelXp) * 100));
             this.hud.xpFill.style.width = `${xpPercent}%`;
@@ -384,10 +392,11 @@ window.addEventListener('load', function () {
             ctx.restore();
         }
 
-        showDamage(x, y, amount, isCrit = false, color = '#fff') {
+        showDamage(x, y, amount, isCrit = false, color = '#fff', offsetY = 0) {
             // Damage = Color (Default White) or Gold (Crit)
             const finalColor = isCrit ? '#FFD700' : color;
-            this.floatingTexts.push(new FloatingText(amount, x, y, finalColor, isCrit));
+
+            this.floatingTexts.push(new FloatingText(amount, x, y + offsetY, finalColor, isCrit));
         }
 
         showHeal(x, y, amount) {
@@ -649,6 +658,15 @@ window.addEventListener('load', function () {
         // Simple check for now based on classes as we did before, or if we standardized properties
         // Ideally we move these props to the player class itself.
         if (dummyPlayer.freezeDuration > 0) specialTraits.push({ name: 'Freeze', val: (dummyPlayer.freezeDuration / 1000).toFixed(1) + 's', color: '#00ACC1' });
+
+        // Warlock Poison
+        if (dummyPlayer.poisonDuration > 0) {
+            specialTraits.push({
+                name: 'Poison',
+                val: `${dummyPlayer.poisonDamage} dmg/tick`,
+                color: '#32CD32'
+            });
+        }
 
         // Archer Slow (Hack for now as it's not on "this" but on projectile logic)
         if (dummyPlayer.constructor.name === 'Archer') specialTraits.push({ name: 'Slow', val: '30%', color: '#ffa' });

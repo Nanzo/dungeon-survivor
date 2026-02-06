@@ -115,13 +115,14 @@ export class Entity {
         target.takeDamage(damage);
     }
 
-    takeDamage(amount, isCrit = false) {
+    takeDamage(amount, isCrit = false, colorOverride = null, offsetY = 0) {
         this.hp -= amount;
         if (this.hp <= 0) {
             this.hp = 0;
             this.markedForDeletion = true; // For enemies
         }
-        this.game.showDamage(this.x + this.width / 2, this.y, Math.round(amount), isCrit, this.damageTextColor);
+        const color = colorOverride || this.damageTextColor;
+        this.game.showDamage(this.x + this.width / 2, this.y, Math.round(amount), isCrit, color, offsetY);
     }
 
     applyKnockback(force, sourceX, sourceY) {
