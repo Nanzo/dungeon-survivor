@@ -360,7 +360,15 @@ window.addEventListener('load', function () {
         }
 
         showDamage(x, y, amount, isCrit = false) {
-            this.floatingTexts.push(new FloatingText(amount, x, y, isCrit));
+            // Damage = Red (Default) or Gold (Crit)
+            // User requested red for damage.
+            const color = isCrit ? '#FFD700' : '#ff4444'; // Gold or Red
+            this.floatingTexts.push(new FloatingText(amount, x, y, color, isCrit));
+        }
+
+        showHeal(x, y, amount) {
+            // Heal = Green
+            this.floatingTexts.push(new FloatingText("+" + amount, x, y, '#44ff44', false));
         }
 
         addExplosion(x, y, radius) {

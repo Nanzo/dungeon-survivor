@@ -36,7 +36,13 @@ export class Player extends Entity {
     }
 
     heal(amount) {
+        if (this.hp >= this.maxHp) return;
+        const oldHp = this.hp;
         this.hp = Math.min(this.maxHp, this.hp + amount);
+        const healedAmount = this.hp - oldHp;
+        if (healedAmount > 0) {
+            this.game.showHeal(this.x + this.width / 2, this.y, Math.ceil(healedAmount));
+        }
     }
 
     levelUp() {

@@ -73,30 +73,19 @@ export class Entity {
                 });
 
                 // 3. Fire Projectiles
-                const count = this.projectileCount || 1; // Default to 1 if not set
+                const count = this.projectileCount || 1;
 
                 const fireVolley = () => {
-                    for (let i = 0; i < count; i++) {
-                        let target = null;
+                    // New "Multishot" Logic:
+                    // Fire at 'count' unique targets (closest first).
+                    // If we have fewer targets than projectiles, we simply fire fewer projectiles.
+                    // This prevents "shotgunning" single targets with Multishot (User request).
 
-                        if (i === 0) {
-                            // First shot always goes to closest
-                            target = targetsInRange[0];
-                        } else {
-                            // Subsequent shots pick random target from range
-                            if (targetsInRange.length > 1) {
-                                const otherTargets = targetsInRange.slice(1);
-                                const randomIndex = Math.floor(Math.random() * otherTargets.length);
-                                target = otherTargets[randomIndex];
-                            } else {
-                                target = targetsInRange[0];
-                            }
-                        }
+                    const targetsToHit = targetsInRange.slice(0, count);
 
-                        if (target) {
-                            this.performAttack(target);
-                        }
-                    }
+                    targetsToHit.forEach(target => {
+                        this.performAttack(target);
+                    });
                 };
 
                 // Immediate Volley
