@@ -1,6 +1,5 @@
 import { Player } from '../base/Player.js';
 import { Assets } from '../../core/Assets.js';
-import { Projectile } from '../../combat/Projectile.js';
 
 export class Gunslinger extends Player {
     constructor(game) {
@@ -19,9 +18,6 @@ export class Gunslinger extends Player {
         this.projectileSpeed = 20; // Very Fast
         this.projectileAOE = 0;
         this.projectileCount = 2; // STARTING TRAIT: Dual Wield
-
-        // UI Infoslinger Special: Starts with 2 projectiles (Dual Wield)
-        this.projectileCount = 2;
 
         this.description = "A dual-wielding outlaw. Fires two bullets at once: one at the closest target, the other at a random target in range.";
         this.roleDescription = "Burst DPS / Hybrid Target";
