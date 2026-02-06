@@ -12,6 +12,7 @@ import { Bard } from './entities/classes/Bard.js';
 import { Monk } from './entities/classes/Monk.js';
 import { Necromancer } from './entities/classes/Necromancer.js';
 import { Druid } from './entities/classes/Druid.js';
+import { God } from './entities/classes/God.js';
 import { Map } from './world/Map.js?v=3';
 import { Rat } from './entities/enemies/Rat.js';
 import { Monster } from './entities/enemies/Monster.js';
@@ -70,6 +71,8 @@ window.addEventListener('load', function () {
                 this.player = new Necromancer(this);
             } else if (classType === 'druid') {
                 this.player = new Druid(this);
+            } else if (classType === 'god') {
+                this.player = new God(this);
             } else {
                 this.player = new Warrior(this);
             }
@@ -483,6 +486,10 @@ window.addEventListener('load', function () {
         druidIcon.style.marginRight = '15px';
         druidIcon.style.verticalAlign = 'middle';
     }
+
+    const godBtn = document.getElementById('btnGod');
+    // God button listener - Skip Preview, Start Immediately
+    if (godBtn) godBtn.addEventListener('click', () => startGame('god'));
 
 
     function startGame(classType) {

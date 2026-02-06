@@ -80,6 +80,7 @@ export class Assets {
             case 'Monk': return MonkAssets.generateMonk();
             case 'Necromancer': return Assets.generateNecromancer();
             case 'Druid': return Assets.generateDruid();
+            case 'God': return Assets.generateWarrior(); // Fallback for God icon
             default: return RatAssets.generateRat();
         }
     }
