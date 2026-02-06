@@ -501,6 +501,7 @@ window.addEventListener('load', function () {
         necroIcon.style.verticalAlign = 'middle';
     }
 
+    const druidBtn = document.getElementById('btnDruid');
     if (druidBtn) {
         const druidIcon = Assets.generateDruid();
         druidBtn.prepend(druidIcon);
