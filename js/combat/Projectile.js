@@ -162,11 +162,11 @@ export class Projectile {
     }
 
     applyHitEffects(enemy) {
-        console.log(`[Projectile] Hit Enemy ${enemy.id}. Effects: Poison=${this.poisonDuration > 0}, Freeze=${this.freezeDuration > 0}`);
+        console.log(`[Projectile] Hit Enemy ${enemy.id}. Effects: Poison=${this.poisonDuration > 0}, Freeze=${this.freezeDuration > 0}, Slow=${this.slowDuration > 0}`);
         enemy.takeDamage(this.damage, this.isCrit);
         if (this.knockback > 0) enemy.applyKnockback(this.knockback, this.x, this.y); // Source is projectile pos
         if (this.freezeDuration > 0) enemy.applyFreeze(this.freezeDuration);
-        if (this.slowPercent > 0) enemy.applySlow(this.slowDuration, this.slowPercent);
+        if (this.slowDuration > 0) enemy.applySlow(this.slowDuration, this.slowPercent);
         if (this.poisonDuration > 0) enemy.applyPoison(this.poisonDuration, this.poisonDamage);
     }
 

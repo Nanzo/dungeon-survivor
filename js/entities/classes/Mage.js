@@ -25,12 +25,7 @@ export class Mage extends Player {
         this.image = Assets.generateMage();
     }
 
-    update(input, deltaTime) {
-        super.update(input, deltaTime);
-
-        // Mage Auto Attack (Closest Only)
-        this.tryAttack(this.game.enemies);
-    }
+    // update() removed - uses Player.update()
 
     // Override performAttack to spawn projectile instead of direct damage
     performAttack(target) {

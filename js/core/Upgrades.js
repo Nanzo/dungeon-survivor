@@ -158,6 +158,7 @@ export const Upgrades = [
         name: 'Acoustics',
         description: '+1 Ricochet / Bounce',
         rarity: 'rare',
+        condition: (player) => !player.piercing, // Incompatible with Pierce
         apply: (player) => {
             player.projectileRicochet = (player.projectileRicochet || 0) + 1;
             console.log(`Ricochet Upgraded! New Count: ${player.projectileRicochet}`);
@@ -178,7 +179,7 @@ export const Upgrades = [
         name: 'Piercing Rounds',
         description: 'Projectiles pass through enemies',
         rarity: 'rare',
-        condition: (player) => !player.piercing, // Only if not already owned
+        condition: (player) => !player.piercing && (player.projectileRicochet || 0) === 0, // Incompatible with Ricochet
         apply: (player) => {
             player.piercing = true;
             console.log(`Piercing Upgraded!`);
@@ -200,6 +201,20 @@ export const Upgrades = [
                 player.poisonDamage = 3; // Weaker than Warlock base
                 console.log(`Poison Added!`);
             }
+        }
+    },
+    {
+        id: 'crippling_shot',
+        name: 'Crippling Shot',
+        description: 'Attacks Slow enemies by 15% for 1.5s',
+        rarity: 'rare',
+        apply: (player) => {
+            // Apply a "slowOverride" logic or just generic slow application capability
+            // Since Projectile doesn't have a generic "slow" property yet, we might need to add it to Player and Projectile.
+            // For now, let's assume we add a 'slowDuration' and 'slowPercent' to Player.
+            player.slowDuration = 1500;
+            player.slowPercent = 0.15;
+            console.log(`Crippling Shot Acquired! Slows by 15%`);
         }
     }
 ];

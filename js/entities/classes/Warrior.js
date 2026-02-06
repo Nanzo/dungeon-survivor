@@ -26,10 +26,7 @@ export class Warrior extends Player {
         this.image = Assets.generateWarrior();
     }
 
-    update(input, deltaTime) {
-        super.update(input, deltaTime);
-        this.tryAttack(this.game.enemies);
-    }
+    // update() removed - uses Player.update() which handles movement and tryAttack
 
     performAttack(target) {
         // Throw Sword

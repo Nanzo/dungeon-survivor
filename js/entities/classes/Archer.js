@@ -25,15 +25,12 @@ export class Archer extends Player {
         this.image = Assets.generateArcher();
     }
 
-    update(input, deltaTime) {
-        super.update(input, deltaTime);
-        this.tryAttack(this.game.enemies);
-    }
+    // update() removed - uses Player.update()
 
     performAttack(target) {
         // Shoot Arrow (High Speed, Single Target)
         this.fireProjectile(target, Assets.generateArrow(), {
-            slowPercent: 0.3, // 30% Slow
+            slowPercent: 0.5, // 50% Slow (Buffed)
             slowDuration: 2000 // 2 Seconds
         });
     }

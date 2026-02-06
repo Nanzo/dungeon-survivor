@@ -29,10 +29,7 @@ export class Cleric extends Player {
         this.image = Assets.generateCleric();
     }
 
-    update(input, deltaTime) {
-        super.update(input, deltaTime);
-        this.tryAttack(this.game.enemies);
-    }
+    // update() removed - uses Player.update()
 
     performAttack(target) {
         // Holy Bolt

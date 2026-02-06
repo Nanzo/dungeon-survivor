@@ -29,10 +29,7 @@ export class Barbarian extends Player {
         this.image = Assets.generateBarbarian();
     }
 
-    update(input, deltaTime) {
-        super.update(input, deltaTime);
-        this.tryAttack(this.game.enemies);
-    }
+    // update() removed - uses Player.update()
 
     performAttack(target) {
         // Throw Axe

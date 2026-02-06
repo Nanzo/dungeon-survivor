@@ -29,6 +29,12 @@ export class Player extends Entity {
         this.hpRegen = 0; // HP per second
         this.lifeOnKill = 0; // HP per kill
         this.regenTimer = 0;
+
+        // Status Effect Stats (Universal)
+        this.poisonDuration = 0;
+        this.poisonDamage = 0;
+        this.slowDuration = 0;
+        this.slowPercent = 0;
     }
 
     gainXp(amount) {
@@ -143,7 +149,7 @@ export class Player extends Entity {
         // 2. Determine Stats (Allow overrides)
         const speed = overrides.speed || this.projectileSpeed;
         const aoe = (overrides.aoe !== undefined) ? overrides.aoe : this.projectileAOE;
-        const range = overrides.range || 1000;
+        const range = overrides.range || this.attackRange || 1000;
         const knockback = (overrides.knockback !== undefined) ? overrides.knockback : this.knockback;
 
         // 3. Create Projectile
@@ -165,8 +171,10 @@ export class Player extends Entity {
         projectile.freezeDuration = this.freezeDuration;
         projectile.poisonDuration = this.poisonDuration; // Universal Poison
         projectile.poisonDamage = this.poisonDamage;     // Universal Poison
+        projectile.slowDuration = this.slowDuration;
+        projectile.slowPercent = this.slowPercent;
 
-        console.log(`[Player] Fired Projectile. Poison: ${this.poisonDuration > 0 ? 'YES' : 'NO'} (${this.poisonDamage}/tick), Freeze: ${this.freezeDuration}ms`);
+        console.log(`[Player] Fired Projectile. Poison: ${this.poisonDuration > 0}, Slow: ${this.slowDuration > 0}`);
 
         // Ricochet
         if (this.projectileRicochet > 0) {
