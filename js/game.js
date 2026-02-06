@@ -685,6 +685,7 @@ window.addEventListener('load', function () {
     if (monkBtn) monkBtn.addEventListener('click', () => showClassPreview('monk'));
     if (necroBtn) necroBtn.addEventListener('click', () => showClassPreview('necromancer'));
     if (druidBtn) druidBtn.addEventListener('click', () => showClassPreview('druid'));
+    if (warlockBtn) warlockBtn.addEventListener('click', () => showClassPreview('warlock'));
 
     if (cpBackBtn) {
         cpBackBtn.addEventListener('click', () => {
