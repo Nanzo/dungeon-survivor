@@ -205,12 +205,17 @@ export const Upgrades = [
     {
         id: 'crippling_shot',
         name: 'Crippling Shot',
-        // For now, let's assume we add a 'slowDuration' and 'slowPercent' to Player.
-        player.slowDuration = 2000;
-        player.slowPercent = 0.3;
-        console.log(`Crippling Shot Acquired! Slows by 30%`);
+        description: 'Attacks Slow enemies by 15% for 1.5s',
+        rarity: 'rare',
+        apply: (player) => {
+            // Apply a "slowOverride" logic or just generic slow application capability
+            // Since Projectile doesn't have a generic "slow" property yet, we might need to add it to Player and Projectile.
+            // For now, let's assume we add a 'slowDuration' and 'slowPercent' to Player.
+            player.slowDuration = 1500;
+            player.slowPercent = 0.15;
+            console.log(`Crippling Shot Acquired! Slows by 15%`);
+        }
     }
-}
 ];
 
 export function getRandomUpgrades(count, player) {
