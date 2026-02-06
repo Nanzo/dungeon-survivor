@@ -13,15 +13,14 @@ export class FloatingText {
         this.fontSize = 'bold 20px';
 
         if (this.isCrit) {
-            this.color = '#FFD700'; // Gold override for Crits? Or just Big Red? User asked for Red. Let's keep Gold for Crit as it's special.
-            // User request: "1 damage red".
-            // Let's defer to caller. If caller sends red, it's red. If isCrit, maybe we emphasize size.
-            // But usually Crits have their own color. Let's keep Gold for Crit for now, or maybe Orange-Red.
             this.color = '#FFD700'; // Gold
             this.fontSize = 'bold 30px';
-            this.dy = -40; // Float higher
+            this.dy = -40;
             this.value = value + '!';
         }
+
+        // DEBUG: Uncomment to trace text spawning
+        // console.log(`FloatingText: Val=${value}, Color=${this.color}, Crit=${this.isCrit}, PassedColor=${color}`);
     }
 
     update(deltaTime) {

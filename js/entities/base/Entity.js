@@ -19,6 +19,7 @@ export class Entity {
 
         this.markedForDeletion = false;
         this.image = null;
+        this.damageTextColor = '#fff'; // Default damage text color (White for enemies)
     }
 
     update(deltaTime) {
@@ -120,7 +121,7 @@ export class Entity {
             this.hp = 0;
             this.markedForDeletion = true; // For enemies
         }
-        this.game.showDamage(this.x + this.width / 2, this.y, Math.round(amount), isCrit);
+        this.game.showDamage(this.x + this.width / 2, this.y, Math.round(amount), isCrit, this.damageTextColor);
     }
 
     applyKnockback(force, sourceX, sourceY) {

@@ -9,6 +9,7 @@ export class Player extends Entity {
         this.width = 50;
         this.height = 50;
         this.speed = 5;
+        this.damageTextColor = 'red'; // Player takes RED damage
 
         // Leveling Stats
         this.level = 1;
@@ -21,6 +22,7 @@ export class Player extends Entity {
         this.projectileCount = 1;
         this.critChance = 0.05; // 5% Base Crit Chance
         this.critDamage = 1.5; // 150% Base Crit Damage
+        this.freezeDuration = 0; // Duration in ms
 
         // Sustain Stats
         this.hpRegen = 0; // HP per second
@@ -122,8 +124,8 @@ export class Player extends Entity {
         // Debug hitbox?
     }
 
-    takeDamage(amount) {
-        super.takeDamage(amount);
+    takeDamage(amount, isCrit = false) {
+        super.takeDamage(amount, isCrit);
         if (this.hp <= 0) {
             this.game.gameOver();
         }

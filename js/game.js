@@ -359,11 +359,10 @@ window.addEventListener('load', function () {
             ctx.restore();
         }
 
-        showDamage(x, y, amount, isCrit = false) {
-            // Damage = Red (Default) or Gold (Crit)
-            // User requested red for damage.
-            const color = isCrit ? '#FFD700' : '#ff4444'; // Gold or Red
-            this.floatingTexts.push(new FloatingText(amount, x, y, color, isCrit));
+        showDamage(x, y, amount, isCrit = false, color = '#fff') {
+            // Damage = Color (Default White) or Gold (Crit)
+            const finalColor = isCrit ? '#FFD700' : color;
+            this.floatingTexts.push(new FloatingText(amount, x, y, finalColor, isCrit));
         }
 
         showHeal(x, y, amount) {

@@ -109,8 +109,8 @@ export const Upgrades = [
         description: '+0.5s Freeze Duration',
         rarity: 'rare',
         apply: (player) => {
-            if (player.freezeDuration) {
-                player.freezeDuration += 500;
+            apply: (player) => {
+                player.freezeDuration = (player.freezeDuration || 0) + 500;
                 console.log(`Freeze Upgraded! New Duration: ${player.freezeDuration}ms`);
             }
         }

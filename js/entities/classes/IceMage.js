@@ -17,7 +17,7 @@ export class IceMage extends Player {
         // Projectile / Ability Stats
         this.projectileSpeed = 4.5; // Slowed from 12
         this.projectileAOE = 60; // Same AOE as Fire Mage
-        this.freezeDuration = 1000; // 1 second Freeze
+        this.freezeDuration = 1500; // 1.5 second Freeze
 
         // UI Info
         this.description = "A cryomancer who freezes enemies in their tracks. Lower damage but unmatched crowd control.";
