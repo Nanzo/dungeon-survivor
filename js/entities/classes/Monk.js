@@ -1,6 +1,6 @@
 import { Player } from '../base/Player.js';
 import { Assets } from '../../core/Assets.js';
-import { Projectile } from '../../combat/Projectile.js';
+import { FistProjectile } from '../../combat/projectiles/FistProjectile.js';
 
 export class Monk extends Player {
     constructor(game) {
@@ -33,6 +33,6 @@ export class Monk extends Player {
 
     performAttack(target) {
         // Fist Projectile
-        this.fireProjectile(target, Assets.generateFist());
+        this.spawnProjectile(FistProjectile, target);
     }
 }

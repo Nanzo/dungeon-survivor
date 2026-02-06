@@ -111,6 +111,7 @@
         <!-- <button id="btnGod" class="class-btn" style="border-color: gold; color: gold; font-weight: bold;">GOD MODE</button> -->
         <button id="btnGunslinger" class="class-btn" style="border-color: #37474F;">Gunslinger</button>
         <button id="btnIceMage" class="class-btn" style="border-color: #00ACC1;">Ice Mage</button>
+        <button id="btnLancer" class="class-btn" style="border-color: #008b8b;">Lancer</button>
         <button id="btnMage" class="class-btn" style="border-color: #4B0082;">Mage</button>
         <button id="btnMonk" class="class-btn" style="border-color: #FF8C00; color: #EEE;">Monk</button>
         <button id="btnNecromancer" class="class-btn" style="border-color: #2A0A3B; color: #EEE;">Necromancer</button>
@@ -207,40 +208,69 @@
 
             <div style="font-size: 0.85em; line-height: 1.5;">
                 <!-- Common (White) -->
-                <div style="color: #ddd; margin-bottom: 5px;">
-                    <div>HP: <span id="hudHp" style="color: #f66; float: right;">100/100</span></div>
-                    <div>Damage: <span id="hudAtk" style="color: white; float: right;">10</span></div>
-                    <div>Defense: <span id="hudDef" style="color: white; float: right;">0</span></div>
-                    <div>Move Spd: <span id="hudSpd" style="color: white; float: right;">5</span></div>
+                <div style="margin-bottom: 5px;">
+                    <div>Max Health: <span id="hudHp" style="float: right;">100/100</span></div>
+                    <div>Attack Damage: <span id="hudAtk" style="float: right;">10</span></div>
+                    <div>Defense: <span id="hudDef" style="float: right;">0</span></div>
+                    <div>Movement Speed: <span id="hudSpd" style="float: right;">5</span></div>
+                    <div>Attack Speed: <span id="hudAtkSpd" style="float: right;">0.5s</span></div>
+                    <div>Projectile Speed: <span id="hudProjSpd" style="float: right;">12</span></div>
                 </div>
 
                 <hr style="border-color: #333; margin: 5px 0;">
 
-                <!-- Uncommon (Green) -->
-                <div style="color: #8f8; margin-bottom: 5px;">
-                    <div>Atk Spd: <span id="hudAtkSpd" style="float: right;">0.5s</span></div>
-                    <div>Range: <span id="hudRange" style="float: right;">150</span></div>
-                    <div>Proj Spd: <span id="hudProjSpd" style="float: right;">12</span></div>
-                    <div>Crit Rate: <span id="hudCritRate" style="float: right; color: #fff;">5%</span></div>
-                    <div>Crit Dmg: <span id="hudCritDmg" style="float: right; color: #fff;">150%</span></div>
+                <!-- Uncommon (Green #8f8) -->
+                <div style="margin-bottom: 5px;">
+                    <div><span style="color: #8f8;">Attack Range:</span> <span id="hudRange"
+                            style="float: right;">150</span></div>
+                    <div><span style="color: #8f8;">Health Regen:</span> <span id="hudRegen"
+                            style="float: right;">0/s</span></div>
+                    <div><span style="color: #8f8;">Critical Rate:</span> <span id="hudCritRate"
+                            style="float: right;">5%</span></div>
+                    <div><span style="color: #8f8;">Critical Damage:</span> <span id="hudCritDmg"
+                            style="float: right;">150%</span></div>
+                    <div><span style="color: #8f8;">Poison Damage:</span> <span id="hudPoison"
+                            style="float: right;">0</span></div>
+                    <div><span style="color: #8f8;">Dmg Reduction:</span> <span id="hudBlock"
+                            style="float: right;">0%</span></div>
                 </div>
 
                 <hr style="border-color: #333; margin: 5px 0;">
 
-                <!-- Rare (Purple/Gold) -->
-                <div style="color: #b388ff;">
-                    <div>Multishot: <span id="hudMulti" style="color: gold; float: right;">1</span></div>
-                    <div>Pierce: <span id="hudPierce" style="color: gold; float: right;">No</span></div>
-                    <div>AOE: <span id="hudAOE" style="color: gold; float: right;">0</span></div>
-                    <div>Knockback: <span id="hudKB" style="color: gold; float: right;">0</span></div>
-                    <div>Slow: <span id="hudSlow" style="color: gold; float: right;">No</span></div>
-                    <div>Freeze: <span id="hudFreeze" style="color: gold; float: right;">No</span></div>
-                    <div>Regen: <span id="hudRegen" style="color: #8f8; float: right;">0/s</span></div>
-                    <div>Life on Kill: <span id="hudLoK" style="color: #8f8; float: right;">0</span></div>
-                    <div>Ricochet: <span id="hudRicochet" style="color: #FF1493; float: right;">0</span></div>
-                    <div>Ex. Strikes: <span id="hudDbl" style="color: #FF8C00; float: right;">0</span></div>
-                    <div>Poison: <span id="hudPoison" style="color: #32CD32; float: right;">0</span></div>
+                <!-- Rare (Blue #66ccff) -->
+                <div style="margin-bottom: 5px;">
+                    <div><span style="color: #66ccff;">Area of Effect:</span> <span id="hudAOE"
+                            style="float: right;">0</span></div>
+                    <div><span style="color: #66ccff;">Knockback:</span> <span id="hudKB" style="float: right;">0</span>
+                    </div>
+                    <div><span style="color: #66ccff;">Slow Duration:</span> <span id="hudSlow"
+                            style="float: right;">No</span></div>
+                    <div><span style="color: #66ccff;">Life on Kill:</span> <span id="hudLoK"
+                            style="float: right;">0</span></div>
                 </div>
+
+                <hr style="border-color: #333; margin: 5px 0;">
+
+                <!-- Epic (Purple #cc99ff) -->
+                <div style="margin-bottom: 5px;">
+                    <div><span style="color: #cc99ff;">Ricochet Count:</span> <span id="hudRicochet"
+                            style="float: right;">0</span></div>
+                    <div><span style="color: #cc99ff;">Piercing:</span> <span id="hudPierce"
+                            style="float: right;">No</span></div>
+                    <div><span style="color: #cc99ff;">Freeze Duration:</span> <span id="hudFreeze"
+                            style="float: right;">No</span></div>
+                </div>
+
+                <hr style="border-color: #333; margin: 5px 0;">
+
+                <!-- Legendary (Orange #ffd000) -->
+                <div>
+                    <div><span style="color: #ffd000;">Multishot:</span> <span id="hudMulti"
+                            style="float: right;">1</span></div>
+                    <div><span style="color: #ffd000;">Extra Strikes:</span> <span id="hudDbl"
+                            style="float: right;">0</span></div>
+                </div>
+
             </div>
         </div>
 
@@ -320,7 +350,7 @@
             to Menu</button>
     </div>
     <canvas id="gameCanvas" width="800" height="600"></canvas>
-    <script type="module" src="js/game.js?v=4"></script>
+    <script type="module" src="js/game.js?v=12"></script>
 </body>
 
 </html>

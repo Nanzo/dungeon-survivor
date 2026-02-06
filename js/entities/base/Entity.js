@@ -116,6 +116,11 @@ export class Entity {
     }
 
     takeDamage(amount, isCrit = false, colorOverride = null, offsetY = 0) {
+        // Apply Damage Reduction (if any)
+        if (this.damageReduction > 0) {
+            amount = Math.max(0, amount * (1 - this.damageReduction));
+        }
+
         this.hp -= amount;
         if (this.hp <= 0) {
             this.hp = 0;

@@ -7,11 +7,11 @@ export class LevelUpScreen {
         this.container = document.getElementById('upgradeCards');
     }
 
-    show() {
+    show(minRarity = 'common') {
         this.element.style.display = 'flex';
         this.container.innerHTML = ''; // Clear previous
 
-        const upgrades = getRandomUpgrades(3, this.game.player);
+        const upgrades = getRandomUpgrades(3, this.game.player, minRarity);
 
         upgrades.forEach((upgrade, index) => {
             const card = document.createElement('div');
@@ -26,10 +26,19 @@ export class LevelUpScreen {
                 titleColor = '#8f8';
                 bgColor = '#131';
             } else if (upgrade.rarity === 'rare') {
-                borderColor = 'gold'; // Gold/Purple
-                titleColor = '#f0f';
-                bgColor = '#202';
+                borderColor = '#0088ff'; // Blue (Requested)
+                titleColor = '#66ccff';
+                bgColor = '#002244';
+            } else if (upgrade.rarity === 'epic') {
+                borderColor = '#9933ff'; // Purple
+                titleColor = '#cc99ff';
+                bgColor = '#2a0a44';
+            } else if (upgrade.rarity === 'legendary') {
+                borderColor = '#ffaa00'; // Orange
+                titleColor = '#ffd000';
+                bgColor = '#442200';
             }
+
 
             card.style.cssText = `
                 background: ${bgColor};

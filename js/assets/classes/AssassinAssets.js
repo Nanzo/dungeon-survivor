@@ -6,58 +6,95 @@ export class AssassinAssets {
         canvas.height = 64;
         const ctx = canvas.getContext('2d');
 
-        // Shadow
-        ctx.fillStyle = 'rgba(0,0,0,0.4)';
-        ctx.beginPath();
-        ctx.ellipse(32, 58, 18, 6, 0, 0, Math.PI * 2);
-        ctx.fill();
+        // Dynamic Pose: Crouched / Ready to strike
 
-        // 1. Cloak (Dark Grey/Black)
-        ctx.fillStyle = '#212121'; // Almost black
-        // Body (Slimmer)
-        ctx.fillRect(24, 20, 16, 35);
-
-        // 2. Head
-        ctx.fillStyle = '#424242'; // Dark Grey Hood
-        ctx.beginPath();
-        ctx.arc(32, 20, 12, Math.PI, 0); // Top of hood
-        ctx.lineTo(44, 30);
-        ctx.lineTo(20, 30);
-        ctx.fill();
-
-        // Face Shadow (Hidden)
-        ctx.fillStyle = '#000000';
-        ctx.fillRect(26, 18, 12, 10);
-
-        // Eyes (Red glowing dots)
-        ctx.fillStyle = '#D50000';
-        ctx.fillRect(28, 22, 2, 2);
-        ctx.fillRect(34, 22, 2, 2);
-
-        // 3. Arms / Daggers
+        // 1. Cloak (Midnight Blue/Black)
         ctx.fillStyle = '#212121';
-        ctx.fillRect(16, 25, 8, 15); // Left Arm
-        ctx.fillRect(40, 25, 8, 15); // Right Arm
-
-        // Daggers
-        ctx.fillStyle = '#E0E0E0'; // Steel
-        // Left Dagger
         ctx.beginPath();
-        ctx.moveTo(18, 40);
-        ctx.lineTo(22, 40);
-        ctx.lineTo(20, 55); // Point down
-        ctx.fill();
-        // Right Dagger
-        ctx.beginPath();
-        ctx.moveTo(42, 40);
-        ctx.lineTo(46, 40);
-        ctx.lineTo(44, 55); // Point down
+        // Flowing cape/coat
+        ctx.moveTo(28, 20);
+        ctx.bezierCurveTo(10, 40, 5, 50, 15, 58); // Left flow
+        ctx.lineTo(49, 58);
+        ctx.bezierCurveTo(55, 50, 50, 40, 36, 20); // Right flow
         ctx.fill();
 
-        // Red tip (Poison/Blood?)
-        ctx.fillStyle = '#B71C1C';
-        ctx.fillRect(19, 50, 2, 5);
-        ctx.fillRect(43, 50, 2, 5);
+        // 2. Armor/Body (Tight leather)
+        ctx.fillStyle = '#424242'; // Dark Grey
+        ctx.fillRect(26, 25, 12, 30);
+
+        // Belt
+        ctx.fillStyle = '#B71C1C'; // Red Sash
+        ctx.fillRect(26, 40, 12, 4);
+
+        // 3. Head (Deep Hood)
+        ctx.fillStyle = '#212121';
+        ctx.beginPath();
+        ctx.moveTo(32, 10);
+        ctx.quadraticCurveTo(45, 10, 42, 30); // Right side
+        ctx.lineTo(32, 35); // Chin point
+        ctx.lineTo(22, 30); // Left side
+        ctx.quadraticCurveTo(19, 10, 32, 10); // Top
+        ctx.fill();
+
+        // Face Shadow
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        ctx.arc(32, 22, 7, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Eyes (Glowing Red Slits)
+        ctx.fillStyle = '#FF1744';
+        ctx.shadowColor = '#FF1744';
+        ctx.shadowBlur = 5;
+        ctx.beginPath();
+        ctx.moveTo(28, 20); ctx.lineTo(30, 22); ctx.lineTo(28, 22); ctx.fill(); // Left
+        ctx.beginPath();
+        ctx.moveTo(36, 20); ctx.lineTo(34, 22); ctx.lineTo(36, 22); ctx.fill(); // Right
+        ctx.shadowBlur = 0;
+
+        // 4. Arms & Dual Daggers (Reverse Grip)
+
+        // Left Arm (Extended Side)
+        ctx.fillStyle = '#333';
+        ctx.beginPath();
+        ctx.moveTo(26, 28);
+        ctx.lineTo(12, 35); // Elbow/Wrist
+        ctx.stroke(); // Just kidding, fill rect
+        ctx.fill();
+        ctx.fillRect(12, 28, 14, 6); // Arm
+
+        // Left Dagger (Reverse Grip - Pointing Back/Down)
+        ctx.translate(12, 32);
+        ctx.rotate(0.5); // Tilt
+        ctx.fillStyle = '#CFD8DC'; // Blade
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(-4, 15); // Point
+        ctx.lineTo(4, 0);
+        ctx.fill();
+        ctx.fillStyle = '#5D4037'; // Handle
+        ctx.fillRect(-2, -6, 4, 6);
+        ctx.rotate(-0.5); // Reset
+        ctx.translate(-12, -32);
+
+        // Right Arm (Extended Side)
+        ctx.fillStyle = '#333';
+        ctx.fillRect(38, 28, 14, 6);
+
+        // Right Dagger (Reverse Grip)
+        ctx.translate(52, 32);
+        ctx.rotate(-0.5); // Tilt
+        ctx.fillStyle = '#CFD8DC'; // Blade
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(4, 15); // Point
+        ctx.lineTo(-4, 0);
+        ctx.fill();
+        ctx.fillStyle = '#5D4037'; // Handle
+        ctx.fillRect(-2, -6, 4, 6);
+        ctx.rotate(0.5); // Reset
+        ctx.translate(-52, -32);
+
 
         return canvas;
     }
@@ -73,21 +110,27 @@ export class AssassinAssets {
         ctx.rotate(Math.PI / 4);
         ctx.translate(-16, -16);
 
-        // Dagger Blade
-        ctx.fillStyle = '#BDBDBD'; // Silver
+        // Dagger Blade (Wicked Curved)
+        ctx.fillStyle = '#B0BEC5'; // Silver
         ctx.beginPath();
         ctx.moveTo(14, 4);
-        ctx.lineTo(18, 4);
-        ctx.lineTo(16, 24); // Sharp point
+        ctx.quadraticCurveTo(6, 15, 16, 28); // Curved edge
+        ctx.quadraticCurveTo(26, 15, 18, 4);
         ctx.fill();
 
+        // Blood Groove
+        ctx.fillStyle = '#78909C';
+        ctx.fillRect(15.5, 6, 1, 14);
+
         // Handle
-        ctx.fillStyle = '#3E2723'; // Dark Wood
+        ctx.fillStyle = '#212121'; // Black Grip
         ctx.fillRect(13, 2, 6, 4);
 
-        // Guard
-        ctx.fillStyle = '#FFD700'; // Gold accent
-        ctx.fillRect(10, 4, 12, 2);
+        // Pommel
+        ctx.fillStyle = '#B71C1C'; // Red Gem
+        ctx.beginPath();
+        ctx.arc(16, 2, 2, 0, Math.PI * 2);
+        ctx.fill();
 
         return canvas;
     }

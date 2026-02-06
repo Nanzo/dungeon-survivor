@@ -1,3 +1,4 @@
+
 export const BardAssets = {
     generateBard() {
         const canvas = document.createElement('canvas');
@@ -5,110 +6,125 @@ export const BardAssets = {
         canvas.height = 64;
         const ctx = canvas.getContext('2d');
 
-        // Cape/Cloak (Behind)
-        ctx.fillStyle = '#4B0082'; // Indigo
-        ctx.fillRect(20, 28, 24, 34);
-
-        // Body (Chest)
-        ctx.fillStyle = '#FFF'; // White shirt
-        ctx.fillRect(22, 30, 20, 30);
-
-        // Vest
-        ctx.fillStyle = '#800080'; // Purple Vest
+        // 1. Cape (Flowing Magenta)
+        ctx.fillStyle = '#8B008B'; // Dark Magenta
         ctx.beginPath();
-        ctx.moveTo(22, 30);
-        ctx.lineTo(32, 60);
-        ctx.lineTo(42, 30);
+        ctx.moveTo(20, 25);
+        ctx.quadraticCurveTo(10, 45, 12, 58);
+        ctx.lineTo(52, 58); // Cape bottom
+        ctx.quadraticCurveTo(54, 45, 44, 25);
         ctx.fill();
 
-        // Pants (visible at bottom)
-        ctx.fillStyle = '#333';
-        ctx.fillRect(24, 55, 6, 8); // Left leg
-        ctx.fillRect(34, 55, 6, 8); // Right leg
+        // 2. Body / Shirt (White silk)
+        ctx.fillStyle = '#F8F8FF'; // GhostWhite
+        ctx.fillRect(22, 28, 20, 30);
 
-        // Head
-        ctx.fillStyle = '#FFE0BD';
+        // 3. Vest (Purple Velvet)
+        ctx.fillStyle = '#4B0082'; // Indigo/Purple
         ctx.beginPath();
-        ctx.arc(32, 18, 9, 0, Math.PI * 2);
+        ctx.moveTo(22, 28);
+        ctx.lineTo(22, 58);
+        ctx.lineTo(28, 58);
+        ctx.lineTo(28, 48); // Vest opening
+        ctx.lineTo(36, 48);
+        ctx.lineTo(36, 58);
+        ctx.lineTo(42, 58);
+        ctx.lineTo(42, 28);
         ctx.fill();
 
-        // Face
-        ctx.fillStyle = '#333';
-        ctx.beginPath(); // Smile/Singing
-        ctx.arc(32, 20, 4, 0, Math.PI, false);
+        // Gold buttons
+        ctx.fillStyle = '#FFD700';
+        ctx.beginPath();
+        ctx.arc(25, 35, 1, 0, Math.PI * 2);
+        ctx.arc(25, 42, 1, 0, Math.PI * 2);
+        ctx.arc(39, 35, 1, 0, Math.PI * 2);
+        ctx.arc(39, 42, 1, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 4. Head
+        ctx.fillStyle = '#FFE0BD'; // Skin
+        ctx.beginPath();
+        ctx.arc(32, 20, 9, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Face (Singing)
+        ctx.strokeStyle = '#3E2723';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(32, 22, 3, 0, Math.PI, false); // Mouth open/singing
         ctx.stroke();
 
-        // Stylish Hair (Blonde/Gold)
-        ctx.fillStyle = '#DAA520';
+        // Eyes (Closed/Into the music)
         ctx.beginPath();
-        ctx.arc(32, 16, 10, Math.PI, Math.PI * 2); // Top
-        ctx.lineTo(44, 22); // Right flow
-        ctx.lineTo(42, 14);
-        ctx.lineTo(22, 14);
-        ctx.lineTo(20, 22); // Left flow
+        ctx.moveTo(28, 18);
+        ctx.lineTo(31, 18);
+        ctx.moveTo(33, 18);
+        ctx.lineTo(36, 18);
+        ctx.stroke();
+
+        // 5. Hat (Big Fabulous Feathered Cap)
+        ctx.fillStyle = '#800080'; // Purple
+        ctx.beginPath();
+        ctx.ellipse(32, 14, 14, 6, 0, 0, Math.PI * 2); // Brim
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(32, 12, 8, Math.PI, Math.PI * 2); // Dome
         ctx.fill();
 
-        // Hat (Beret with Feather)
-        ctx.fillStyle = '#8A2BE2'; // BlueViolet
+        // Feather (Huge Magenta Plume)
+        ctx.fillStyle = '#FF00FF'; // Magenta
         ctx.beginPath();
-        ctx.ellipse(32, 10, 12, 6, 0, 0, Math.PI * 2);
-        ctx.fill();
-        // Feather
-        ctx.fillStyle = '#FF4500'; // Red Feather
-        ctx.beginPath();
-        ctx.moveTo(32, 10);
-        ctx.quadraticCurveTo(45, 0, 50, 5);
-        ctx.lineTo(42, 12);
+        ctx.moveTo(40, 14);
+        ctx.quadraticCurveTo(55, 5, 50, 20); // Curl down
+        ctx.quadraticCurveTo(45, 18, 40, 14);
         ctx.fill();
 
-        // LUTE (The Masterpiece)
+
+        // 6. GUITAR / LUTE (Lowered to Body)
         ctx.save();
-        ctx.translate(26, 30);
-        ctx.rotate(-Math.PI / 4); // Angled
+        ctx.translate(32, 42); // Centered on stomach
+        ctx.rotate(-Math.PI / 6); // Slightly tilted up
 
         // Body
-        ctx.fillStyle = '#8B4513'; // SaddleBrown
+        ctx.fillStyle = '#8D6E63'; // Wood
         ctx.beginPath();
-        ctx.arc(10, 10, 10, 0, Math.PI * 2);
+        ctx.ellipse(0, 5, 10, 12, 0, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = '#CD853F'; // Peru (Wood detail)
+
+        // Sound hole
+        ctx.fillStyle = '#3E2723';
         ctx.beginPath();
-        ctx.arc(10, 10, 8, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#333'; // Sound hole
-        ctx.beginPath();
-        ctx.arc(10, 10, 3, 0, Math.PI * 2);
+        ctx.arc(0, 5, 4, 0, Math.PI * 2);
         ctx.fill();
 
         // Neck
-        ctx.fillStyle = '#8B4513';
-        ctx.fillRect(8, -15, 4, 18);
+        ctx.fillStyle = '#5D4037';
+        ctx.fillRect(-3, -15, 6, 20); // Going up
+
+        // Headstock
+        ctx.fillStyle = '#8D6E63';
+        ctx.fillRect(-4, -20, 8, 6);
 
         // Strings
-        ctx.strokeStyle = '#EEE';
-        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#FFF';
+        ctx.lineWidth = 0.5;
         ctx.beginPath();
-        ctx.moveTo(9, -15);
-        ctx.lineTo(9, 5);
-        ctx.moveTo(11, -15);
-        ctx.lineTo(11, 5);
+        ctx.moveTo(-1, -20);
+        ctx.lineTo(-1, 10);
+        ctx.moveTo(1, -20);
+        ctx.lineTo(1, 10);
         ctx.stroke();
-
-        // Headstock (bent back)
-        ctx.fillStyle = '#553311';
-        ctx.fillRect(7, -20, 6, 5);
 
         ctx.restore();
 
-        // Arms holding lute
+        // 7. Hands (Playing)
         ctx.fillStyle = '#FFE0BD';
         ctx.beginPath();
-        ctx.arc(28, 42, 4, 0, Math.PI * 2); // Left hand on neck
+        ctx.arc(24, 38, 4, 0, Math.PI * 2); // Fret hand
         ctx.fill();
         ctx.beginPath();
-        ctx.arc(40, 48, 4, 0, Math.PI * 2); // Right hand strumming
+        ctx.arc(42, 45, 4, 0, Math.PI * 2); // Strum hand
         ctx.fill();
-
 
         const img = new Image();
         img.src = canvas.toDataURL();
@@ -122,22 +138,22 @@ export const BardAssets = {
         const ctx = canvas.getContext('2d');
 
         // Multi-colored notes
-        const colors = ['#FF69B4', '#00BFFF', '#7B68EE'];
+        const colors = ['#FF00FF', '#9400D3', '#FFFFFF']; // Magenta, Violet, White
         const color = colors[Math.floor(Math.random() * colors.length)];
 
-        ctx.fillStyle = '#FF1493'; // Base Pink
-        ctx.font = 'bold 28px "Segoe UI Symbol"'; // Use system font if possible, or standard serif
+        ctx.fillStyle = color;
+        ctx.font = 'bold 26px "Arial"';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
-        // Shadow/Glow
-        ctx.shadowBlur = 6;
-        ctx.shadowColor = '#FF69B4'; // HotPink glow
+        // Glow
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = color;
         ctx.fillText('♫', 16, 16);
 
-        // Stroke
-        ctx.strokeStyle = 'white';
-        ctx.lineWidth = 1;
+        // Outline
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 0.5;
         ctx.strokeText('♫', 16, 16);
 
         const img = new Image();

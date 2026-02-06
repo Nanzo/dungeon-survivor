@@ -1,6 +1,6 @@
 import { Player } from '../base/Player.js';
 import { Assets } from '../../core/Assets.js';
-import { Projectile } from '../../combat/Projectile.js';
+import { Fireball } from '../../combat/projectiles/Fireball.js';
 
 export class Mage extends Player {
     constructor(game) {
@@ -30,7 +30,7 @@ export class Mage extends Player {
     // Override performAttack to spawn projectile instead of direct damage
     performAttack(target) {
         // Shoot Fireball
-        this.fireProjectile(target, Assets.generateFireball());
+        this.spawnProjectile(Fireball, target);
     }
 }
 
