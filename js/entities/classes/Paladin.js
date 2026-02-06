@@ -35,26 +35,9 @@ export class Paladin extends Player {
 
     performAttack(target) {
         // Hammer Throw
-        const projectile = new Projectile(
-            this.game,
-            this.x, this.y,
-            target,
-            this.projectileSpeed,
-            this.attackPower,
-            this.projectileAOE,
-            Assets.generateHammerProjectile(),
-            this.attackRange,
-            false,
-            5 // Base Knockback
-        );
-        // Sync Upgrades
-        if (this.projectileRicochet) {
-            projectile.ricochetCount = this.projectileRicochet;
-            projectile.ricochetRange = 250;
-        }
-        if (this.piercing) projectile.piercing = true;
-        if (this.knockback) projectile.knockback = this.knockback;
-
-        this.game.projectiles.push(projectile);
+        this.fireProjectile(target, Assets.generateHammerProjectile(), {
+            range: this.attackRange,
+            knockback: 5 // Default high knockback for Hammer
+        });
     }
 }

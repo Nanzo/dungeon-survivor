@@ -31,30 +31,10 @@ export class Archer extends Player {
     }
 
     performAttack(target) {
-        // Shoot Arrow
-        // Speed: 15 (Very Fast), Damage: 20, AOE: 0 (Single Target)
-        const projectile = new Projectile(
-            this.game,
-            this.x, this.y,
-            target,
-            this.projectileSpeed, // High Projectile Speed
-            this.attackPower,
-            this.projectileAOE, // No AOE
-            Assets.generateArrow() // Custom Arrow Asset
-        );
-        projectile.slowPercent = 0.3; // 30% Slow
-        projectile.slowDuration = 2000; // 2 Seconds
-        projectile.slowPercent = 0.3; // 30% Slow
-        projectile.slowDuration = 2000; // 2 Seconds
-
-        // Sync Upgrades
-        if (this.projectileRicochet) {
-            projectile.ricochetCount = this.projectileRicochet;
-            projectile.ricochetRange = 250;
-        }
-        if (this.piercing) projectile.piercing = true;
-        if (this.knockback) projectile.knockback = this.knockback;
-
-        this.game.projectiles.push(projectile);
+        // Shoot Arrow (High Speed, Single Target)
+        this.fireProjectile(target, Assets.generateArrow(), {
+            slowPercent: 0.3, // 30% Slow
+            slowDuration: 2000 // 2 Seconds
+        });
     }
 }

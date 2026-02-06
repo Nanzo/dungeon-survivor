@@ -36,24 +36,8 @@ export class Cleric extends Player {
 
     performAttack(target) {
         // Holy Bolt
-        const projectile = new Projectile(
-            this.game,
-            this.x, this.y,
-            target,
-            this.projectileSpeed,
-            this.attackPower,
-            this.projectileAOE,
-            Assets.generateHolyBolt(),
-            this.attackRange
-        );
-        // Sync Upgrades
-        if (this.projectileRicochet) {
-            projectile.ricochetCount = this.projectileRicochet;
-            projectile.ricochetRange = 250;
-        }
-        if (this.piercing) projectile.piercing = true;
-        if (this.knockback) projectile.knockback = this.knockback;
-
-        this.game.projectiles.push(projectile);
+        this.fireProjectile(target, Assets.generateHolyBolt(), {
+            range: this.attackRange
+        });
     }
 }

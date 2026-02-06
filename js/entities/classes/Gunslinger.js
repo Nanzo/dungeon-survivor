@@ -32,23 +32,7 @@ export class Gunslinger extends Player {
     // Uses base Entity.update() and Entity.tryAttack() now!
 
     performAttack(target) {
-        const bullet = new Projectile(
-            this.game,
-            this.x, this.y,
-            target,
-            this.projectileSpeed,
-            this.attackPower,
-            this.projectileAOE,
-            Assets.generateBullet()
-        );
-        // Sync Upgrades
-        if (this.projectileRicochet) {
-            bullet.ricochetCount = this.projectileRicochet;
-            bullet.ricochetRange = 250;
-        }
-        if (this.piercing) bullet.piercing = true;
-        if (this.knockback) bullet.knockback = this.knockback;
-
-        this.game.projectiles.push(bullet);
+        // Shoot Bullet
+        this.fireProjectile(target, Assets.generateBullet());
     }
 }

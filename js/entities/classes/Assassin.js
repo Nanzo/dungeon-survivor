@@ -35,35 +35,10 @@ export class Assassin extends Player {
     }
 
     performAttack(target) {
-        // Calculate Crit
-        let isCrit = Math.random() < this.critChance;
-        let damage = this.attackPower;
-        if (isCrit) {
-            damage *= this.critDamage;
-        }
-
-        const projectile = new Projectile(
-            this.game,
-            this.x, this.y,
-            target,
-            this.projectileSpeed,
-            damage, // Pass calculated damage
-            this.projectileAOE,
-            Assets.generateDagger(),
-            this.attackRange, // Max Range
-            false, // Piercing
-            0, // Knockback
-            isCrit // Critical Flag
-        );
-
-        // Sync Upgrades
-        if (this.projectileRicochet) {
-            projectile.ricochetCount = this.projectileRicochet;
-            projectile.ricochetRange = 250;
-        }
-        if (this.piercing) projectile.piercing = true;
-        if (this.knockback) projectile.knockback = this.knockback;
-
-        this.game.projectiles.push(projectile);
+        // Throw Dagger
+        // Crit calculated automatically in fireProjectile based on this.critChance (which Assassin overrides)
+        this.fireProjectile(target, Assets.generateDagger(), {
+            range: this.attackRange // Limited range
+        });
     }
 }

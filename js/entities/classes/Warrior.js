@@ -33,27 +33,10 @@ export class Warrior extends Player {
 
     performAttack(target) {
         // Throw Sword
-        const projectile = new Projectile(
-            this.game,
-            this.x, this.y,
-            target,
-            this.projectileSpeed, // Speed
-            this.attackPower,
-            this.projectileAOE, // Single Target
-            Assets.generateSword(),
-            1000, // Max Range
-            false, // Piercing
-            this.knockback // Knockback
-        );
-        // Sync Upgrades
-        if (this.projectileRicochet) {
-            projectile.ricochetCount = this.projectileRicochet;
-            projectile.ricochetRange = 250;
-        }
-        if (this.piercing) projectile.piercing = true;
-        // Knockback is already passed in constructor, but re-assigning ensures latest value if changed dynamically
-        if (this.knockback) projectile.knockback = this.knockback;
-
-        this.game.projectiles.push(projectile);
+        // Warrior uses default stats but ensures correct Knockback/Range
+        this.fireProjectile(target, Assets.generateSword(), {
+            range: 1000,
+            knockback: this.knockback // Explicitly pass current knockback
+        });
     }
 }

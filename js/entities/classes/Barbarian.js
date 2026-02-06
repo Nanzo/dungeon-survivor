@@ -36,26 +36,7 @@ export class Barbarian extends Player {
 
     performAttack(target) {
         // Throw Axe
-        // New Projectile Params: game, x, y, target, speed, dmg, aoe, image, maxRange, piercing
-        const projectile = new Projectile(
-            this.game,
-            this.x, this.y,
-            target,
-            this.projectileSpeed,
-            this.attackPower,
-            this.projectileAOE,
-            Assets.generateAxe(),
-            1000,
-            this.piercing // Pass Piercing param
-        );
-
-        // Sync Upgrades
-        if (this.projectileRicochet) {
-            projectile.ricochetCount = this.projectileRicochet;
-            projectile.ricochetRange = 250;
-        }
-        if (this.knockback) projectile.knockback = this.knockback;
-
-        this.game.projectiles.push(projectile);
+        // Barbarian has this.piercing = true in constructor, so fireProjectile picks it up automatically!
+        this.fireProjectile(target, Assets.generateAxe());
     }
 }

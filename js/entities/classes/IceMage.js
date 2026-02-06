@@ -32,26 +32,8 @@ export class IceMage extends Player {
     }
 
     performAttack(target) {
-        const projectile = new Projectile(
-            this.game,
-            this.x, this.y,
-            target,
-            this.projectileSpeed,
-            this.attackPower,
-            this.projectileAOE,
-            Assets.generateIceShard()
-        );
-        // Apply Freeze Stats
-        projectile.freezeDuration = this.freezeDuration;
-
-        // Sync Upgrades
-        if (this.projectileRicochet) {
-            projectile.ricochetCount = this.projectileRicochet;
-            projectile.ricochetRange = 250;
-        }
-        if (this.piercing) projectile.piercing = true;
-        if (this.knockback) projectile.knockback = this.knockback;
-
-        this.game.projectiles.push(projectile);
+        // Shoot Ice Shard
+        // Uses base freezeDuration synced in fireProjectile
+        this.fireProjectile(target, Assets.generateIceShard());
     }
 }

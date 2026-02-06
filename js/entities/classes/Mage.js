@@ -35,24 +35,7 @@ export class Mage extends Player {
     // Override performAttack to spawn projectile instead of direct damage
     performAttack(target) {
         // Shoot Fireball
-        const projectile = new Projectile(
-            this.game,
-            this.x, this.y,
-            target,
-            this.projectileSpeed, // Projectile Speed 
-            this.attackPower,
-            this.projectileAOE, // Uses the AOE stat
-            Assets.generateFireball()
-        );
-        // Sync Upgrades
-        if (this.projectileRicochet) {
-            projectile.ricochetCount = this.projectileRicochet;
-            projectile.ricochetRange = 250;
-        }
-        if (this.piercing) projectile.piercing = true;
-        if (this.knockback) projectile.knockback = this.knockback;
-
-        this.game.projectiles.push(projectile);
+        this.fireProjectile(target, Assets.generateFireball());
     }
 }
 

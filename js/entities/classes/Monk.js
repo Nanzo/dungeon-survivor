@@ -36,24 +36,6 @@ export class Monk extends Player {
 
     performAttack(target) {
         // Fist Projectile
-        const projectile = new Projectile(
-            this.game,
-            this.x, this.y,
-            target,
-            this.projectileSpeed,
-            this.attackPower,
-            this.projectileAOE,
-            Assets.generateFist() // Monk Fist
-        );
-
-        // Standard sync (always good practice now)
-        if (this.projectileRicochet) {
-            projectile.ricochetCount = this.projectileRicochet;
-            projectile.ricochetRange = 250;
-        }
-        if (this.piercing) projectile.piercing = true;
-        if (this.knockback) projectile.knockback = this.knockback;
-
-        this.game.projectiles.push(projectile);
+        this.fireProjectile(target, Assets.generateFist());
     }
 }

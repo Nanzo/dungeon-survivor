@@ -36,26 +36,9 @@ export class Bard extends Player {
 
     performAttack(target) {
         // Musical Note
-        const projectile = new Projectile(
-            this.game,
-            this.x, this.y,
-            target,
-            this.projectileSpeed,
-            this.attackPower,
-            this.projectileAOE,
-            Assets.generateNoteProjectile(),
-            this.attackRange
-        );
-
-        // Apply Bard specifics
-        projectile.ricochetCount = this.projectileRicochet;
-        // Range of bounce is half the attack range (Keep it tight)
-        projectile.ricochetRange = this.attackRange;
-        // User asked for "same range" or "half". "Same" (350) is actually quite big for a bounce.
-        // Let's try 350 first as explicit request "same range", but maybe reduce if too OP?
-        // Actually user said "maybe half?". Let's do 200 (slightly more than half) for better feel.
-        projectile.ricochetRange = 250;
-
-        this.game.projectiles.push(projectile);
+        // fireProjectile automatically handles this.projectileRicochet, which Bard sets in constructor
+        this.fireProjectile(target, Assets.generateNoteProjectile(), {
+            range: this.attackRange
+        });
     }
 }

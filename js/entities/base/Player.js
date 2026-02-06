@@ -1,5 +1,6 @@
 import { Assets } from '../../core/Assets.js';
 import { Entity } from './Entity.js';
+import { Projectile } from '../../combat/Projectile.js';
 
 export class Player extends Entity {
     constructor(game) {
@@ -129,5 +130,48 @@ export class Player extends Entity {
         if (this.hp <= 0) {
             this.game.gameOver();
         }
+    }
+
+    fireProjectile(target, imageAsset, overrides = {}) {
+        // 1. Calculate Damage & Crit
+        const isCrit = Math.random() < this.critChance;
+        let damage = this.attackPower;
+        if (isCrit) damage *= this.critDamage;
+
+        // 2. Determine Stats (Allow overrides)
+        const speed = overrides.speed || this.projectileSpeed;
+        const aoe = (overrides.aoe !== undefined) ? overrides.aoe : this.projectileAOE;
+        const range = overrides.range || 1000;
+        const knockback = (overrides.knockback !== undefined) ? overrides.knockback : this.knockback;
+
+        // 3. Create Projectile
+        const projectile = new Projectile(
+            this.game,
+            this.x, this.y,
+            target,
+            speed,
+            Math.round(damage),
+            aoe,
+            imageAsset,
+            range,
+            this.piercing,
+            knockback,
+            isCrit
+        );
+
+        // 4. Apply Universal Stats
+        projectile.freezeDuration = this.freezeDuration;
+
+        // Ricochet
+        if (this.projectileRicochet > 0) {
+            projectile.ricochetCount = this.projectileRicochet;
+            projectile.ricochetRange = 250;
+        }
+
+        // Apply any extra overrides (like slow for Archer)
+        Object.assign(projectile, overrides);
+
+        this.game.projectiles.push(projectile);
+        return projectile;
     }
 }
