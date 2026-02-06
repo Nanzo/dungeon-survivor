@@ -184,6 +184,24 @@ export const Upgrades = [
             console.log(`Piercing Upgraded!`);
         }
     }
+    {
+        id: 'venom_strike',
+        name: 'Venomous Strike',
+        description: 'Attacks apply Poison (3 dmg/s for 3s)',
+        rarity: 'uncommon',
+        apply: (player) => {
+            // If player already has poison, buff it?
+            // Or just set it if not present.
+            if (player.poisonDuration > 0) {
+                player.poisonDamage += 2;
+                console.log(`Poison Buffed! New Tick Dmg: ${player.poisonDamage}`);
+            } else {
+                player.poisonDuration = 3;
+                player.poisonDamage = 3; // Weaker than Warlock base
+                console.log(`Poison Added!`);
+            }
+        }
+    }
 ];
 
 export function getRandomUpgrades(count, player) {

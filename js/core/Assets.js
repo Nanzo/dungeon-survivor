@@ -21,6 +21,7 @@ import { BeholderAssets } from '../assets/enemies/BeholderAssets.js';
 import { HydraAssets } from '../assets/enemies/HydraAssets.js';
 import { DragonAssets } from '../assets/enemies/DragonAssets.js';
 import { EnvironmentAssets } from '../assets/environment/EnvironmentAssets.js';
+import { WarlockAssets } from '../assets/classes/WarlockAssets.js';
 
 export class Assets {
     // Characters
@@ -36,6 +37,7 @@ export class Assets {
     static generateBard() { return BardAssets.generateBard(); }
     static generateMonk() { return MonkAssets.generateMonk(); }
     static generateRat() { return RatAssets.generateRat(); }
+    static generateWarlock() { return WarlockAssets.generateWarlock(); }
 
     // Projectiles (Delegating to proper class)
     static generateFireball() { return MageAssets.generateFireball(); }
@@ -47,7 +49,9 @@ export class Assets {
     static generateHolyBolt() { return ClericAssets.generateHolyBolt(); }
     static generateHammerProjectile() { return PaladinAssets.generateHammerProjectile(); }
     static generateNoteProjectile() { return BardAssets.generateNoteProjectile(); }
+    static generateNoteProjectile() { return BardAssets.generateNoteProjectile(); }
     static generateFist() { return MonkAssets.generateFistProjectile(); }
+    static generatePoisonBolt() { return WarlockAssets.generatePoisonBolt(); }
 
     // Summoners
     static generateNecromancer() { return SummonerAssets.generateNecromancer(); }
