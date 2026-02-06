@@ -27,6 +27,11 @@ export class Gunslinger extends Player {
 
     // Uses base Entity.update() and Entity.tryAttack() now!
 
+    update(input, deltaTime) {
+        super.update(input, deltaTime);
+        this.tryAttack(this.game.enemies);
+    }
+
     performAttack(target) {
         // Shoot Bullet
         this.fireProjectile(target, Assets.generateBullet());
