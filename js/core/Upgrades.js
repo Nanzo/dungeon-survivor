@@ -201,7 +201,16 @@ export const Upgrades = [
                 console.log(`Poison Added!`);
             }
         }
+    },
+    {
+        id: 'crippling_shot',
+        name: 'Crippling Shot',
+        // For now, let's assume we add a 'slowDuration' and 'slowPercent' to Player.
+        player.slowDuration = 2000;
+        player.slowPercent = 0.3;
+        console.log(`Crippling Shot Acquired! Slows by 30%`);
     }
+}
 ];
 
 export function getRandomUpgrades(count, player) {

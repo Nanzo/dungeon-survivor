@@ -39,6 +39,7 @@ export class Enemy extends Entity {
         this.slowTimer = duration;
         this.baseSpeed = this.speed; // Store original speed
         this.speed = this.speed * (1 - percent);
+        console.log(`[Enemy ${this.id}] Applied Slow! Duration: ${duration}ms, Percent: ${percent}`);
     }
 
     applyPoison(duration, damagePerTick) {
