@@ -172,10 +172,29 @@ export const Upgrades = [
             player.extraStrikes = (player.extraStrikes || 0) + 1;
             console.log(`Combo Strike Upgraded! Total Extra Strikes: ${player.extraStrikes}`);
         }
+    },
+    {
+        id: 'piercing_rounds',
+        name: 'Piercing Rounds',
+        description: 'Projectiles pass through enemies',
+        rarity: 'rare',
+        condition: (player) => !player.piercing, // Only if not already owned
+        apply: (player) => {
+            player.piercing = true;
+            console.log(`Piercing Upgraded!`);
+        }
     }
 ];
 
-export function getRandomUpgrades(count) {
-    const shuffled = [...Upgrades].sort(() => 0.5 - Math.random());
+export function getRandomUpgrades(count, player) {
+    // Filter upgrades based on condition (if exists)
+    const available = Upgrades.filter(u => {
+        if (u.condition && player) {
+            return u.condition(player);
+        }
+        return true;
+    });
+
+    const shuffled = [...available].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, count);
 }

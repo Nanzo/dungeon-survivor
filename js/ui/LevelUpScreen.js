@@ -11,7 +11,7 @@ export class LevelUpScreen {
         this.element.style.display = 'flex';
         this.container.innerHTML = ''; // Clear previous
 
-        const upgrades = getRandomUpgrades(3);
+        const upgrades = getRandomUpgrades(3, this.game.player);
 
         upgrades.forEach((upgrade, index) => {
             const card = document.createElement('div');
