@@ -501,12 +501,19 @@ window.addEventListener('load', function () {
         necroIcon.style.verticalAlign = 'middle';
     }
 
-    const druidBtn = document.getElementById('btnDruid');
     if (druidBtn) {
         const druidIcon = Assets.generateDruid();
         druidBtn.prepend(druidIcon);
         druidIcon.style.marginRight = '15px';
         druidIcon.style.verticalAlign = 'middle';
+    }
+
+    const warlockBtn = document.getElementById('btnWarlock');
+    if (warlockBtn) {
+        const warlockIcon = Assets.generateWarlock();
+        warlockBtn.prepend(warlockIcon);
+        warlockIcon.style.marginRight = '15px';
+        warlockIcon.style.verticalAlign = 'middle';
     }
 
     const godBtn = document.getElementById('btnGod');
@@ -589,6 +596,7 @@ window.addEventListener('load', function () {
         else if (classType === 'monk') dummyPlayer = new Monk(dummyGame);
         else if (classType === 'necromancer') dummyPlayer = new Necromancer(dummyGame);
         else if (classType === 'druid') dummyPlayer = new Druid(dummyGame);
+        else if (classType === 'warlock') dummyPlayer = new Warlock(dummyGame);
         else dummyPlayer = new Warrior(dummyGame);
 
         // Populate UI

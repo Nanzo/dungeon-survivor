@@ -85,6 +85,7 @@ export class Assets {
             case 'Necromancer': return Assets.generateNecromancer();
             case 'Druid': return Assets.generateDruid();
             case 'God': return Assets.generateWarrior(); // Fallback for God icon
+            case 'Warlock': return Assets.generateWarlock();
             default: return RatAssets.generateRat();
         }
     }
