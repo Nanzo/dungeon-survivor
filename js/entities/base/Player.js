@@ -91,7 +91,9 @@ export class Player extends Entity {
         this.move(dx, 0);
         this.move(0, dy);
 
-        // Auto Attack logic moved to subclasses (Warrior/Mage)
+        // Auto Attack (Default Behavior)
+        // Subclasses that don't want to attack (like Summoner) should override tryAttack to do nothing.
+        this.tryAttack(this.game.enemies);
     }
 
     move(dx, dy) {
@@ -161,6 +163,10 @@ export class Player extends Entity {
 
         // 4. Apply Universal Stats
         projectile.freezeDuration = this.freezeDuration;
+        projectile.poisonDuration = this.poisonDuration; // Universal Poison
+        projectile.poisonDamage = this.poisonDamage;     // Universal Poison
+
+        console.log(`[Player] Fired Projectile. Poison: ${this.poisonDuration > 0 ? 'YES' : 'NO'} (${this.poisonDamage}/tick), Freeze: ${this.freezeDuration}ms`);
 
         // Ricochet
         if (this.projectileRicochet > 0) {

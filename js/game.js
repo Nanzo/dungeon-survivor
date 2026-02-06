@@ -23,6 +23,18 @@ import { Assets } from './core/Assets.js?v=2';
 import { Explosion } from './combat/Explosion.js';
 import { LevelUpScreen } from './ui/LevelUpScreen.js';
 
+// GLOBAL ERROR HANDLER
+window.onerror = function (msg, url, lineNo, columnNo, error) {
+    const errorMsg = `[CRITICAL FAULT] ${msg}\nUrl: ${url}\nLine: ${lineNo}:${columnNo}\nError: ${error}`;
+    console.error(errorMsg);
+    // Optional: Display on screen for mobile debugging
+    // const div = document.createElement('div');
+    // div.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:black; color:red; z-index:9999; padding:20px; white-space:pre-wrap; font-family:monospace;';
+    // div.innerText = errorMsg;
+    // document.body.appendChild(div);
+    return false;
+};
+
 console.log("Game Module Loading...");
 // window.addEventListener('load', function () {
 const canvas = document.getElementById('gameCanvas');
@@ -570,6 +582,7 @@ function startGame(classType) {
     if (selectionScreen) {
         selectionScreen.style.display = 'none';
     }
+    console.log(`[Game] Starting Game with class: ${classType}`);
     game = new Game(canvas.width, canvas.height, classType);
     animate(0);
 }

@@ -22,6 +22,7 @@ import { HydraAssets } from '../assets/enemies/HydraAssets.js';
 import { DragonAssets } from '../assets/enemies/DragonAssets.js';
 import { EnvironmentAssets } from '../assets/environment/EnvironmentAssets.js';
 import { WarlockAssets } from '../assets/classes/WarlockAssets.js';
+console.log("WarlockAssets Loaded:", WarlockAssets);
 
 export class Assets {
     // Characters
