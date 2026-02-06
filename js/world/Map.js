@@ -8,6 +8,7 @@ export class Map {
         this.chunks = new globalThis.Map();
 
         // Generate Assets
+        console.log("[Map] Generating Tileset Assets...");
         this.tileImages = EnvironmentAssets.generateTileset();
     }
 
@@ -24,6 +25,7 @@ export class Map {
     }
 
     generateChunk(cx, cy) {
+        // console.log(`[Map] Generating Chunk ${cx},${cy}`); // Too verbose for every chunk, but good if needed
         const chunk = [];
         for (let y = 0; y < this.chunkSize; y++) {
             for (let x = 0; x < this.chunkSize; x++) {

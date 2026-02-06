@@ -45,6 +45,7 @@ export class Enemy extends Entity {
         this.isPoisoned = true;
         this.poisonTimer = duration;
         this.poisonDamage = damagePerTick;
+        console.log(`[Enemy ${this.id}] Applied Poison! Duration: ${duration}ms, Dmg: ${damagePerTick}`);
 
         // Immediate Tick (Show Green Number on Impact)
         // Offset Y by -25 so it appears ABOVE the projectile hit damage (which is at 0 offset)
@@ -82,6 +83,7 @@ export class Enemy extends Entity {
             this.poisonTickTimer -= deltaTime;
 
             if (this.poisonTickTimer <= 0) {
+                console.log(`[Enemy ${this.id}] Poison Tick! Taking ${this.poisonDamage} dmg.`);
                 this.takeDamage(this.poisonDamage, false, '#0f0'); // Green damage text via override
                 this.poisonTickTimer = this.poisonTickRate; // Reset tick
             }

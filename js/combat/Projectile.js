@@ -162,6 +162,7 @@ export class Projectile {
     }
 
     applyHitEffects(enemy) {
+        console.log(`[Projectile] Hit Enemy ${enemy.id}. Effects: Poison=${this.poisonDuration > 0}, Freeze=${this.freezeDuration > 0}`);
         enemy.takeDamage(this.damage, this.isCrit);
         if (this.knockback > 0) enemy.applyKnockback(this.knockback, this.x, this.y); // Source is projectile pos
         if (this.freezeDuration > 0) enemy.applyFreeze(this.freezeDuration);
