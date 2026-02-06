@@ -28,10 +28,7 @@ export class Paladin extends Player {
         this.image = Assets.generatePaladin();
     }
 
-    update(input, deltaTime) {
-        super.update(input, deltaTime);
-        this.tryAttack(this.game.enemies);
-    }
+    // update() removed - uses Player.update()
 
     performAttack(target) {
         // Hammer Throw

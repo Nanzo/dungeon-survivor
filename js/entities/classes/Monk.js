@@ -29,10 +29,7 @@ export class Monk extends Player {
         this.image = Assets.generateMonk();
     }
 
-    update(input, deltaTime) {
-        super.update(input, deltaTime);
-        this.tryAttack(this.game.enemies);
-    }
+    // update() removed - uses Player.update()
 
     performAttack(target) {
         // Fist Projectile

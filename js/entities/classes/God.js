@@ -87,10 +87,7 @@ export class God extends Player {
         }
     }
 
-    update(input, deltaTime) {
-        super.update(input, deltaTime);
-        this.tryAttack(this.game.enemies);
-    }
+    // update() removed - uses Player.update()
 
     performAttack(target) {
         // Generate Asset based on config

@@ -26,10 +26,7 @@ export class IceMage extends Player {
         this.image = Assets.generateIceMage();
     }
 
-    update(input, deltaTime) {
-        super.update(input, deltaTime);
-        this.tryAttack(this.game.enemies);
-    }
+    // update() removed - uses Player.update()
 
     performAttack(target) {
         // Shoot Ice Shard

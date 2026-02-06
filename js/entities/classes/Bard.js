@@ -29,10 +29,7 @@ export class Bard extends Player {
         this.image = Assets.generateBard();
     }
 
-    update(input, deltaTime) {
-        super.update(input, deltaTime);
-        this.tryAttack(this.game.enemies);
-    }
+    // update() removed - uses Player.update()
 
     performAttack(target) {
         // Musical Note
