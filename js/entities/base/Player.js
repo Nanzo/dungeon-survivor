@@ -149,7 +149,7 @@ export class Player extends Entity {
         // 2. Determine Stats (Allow overrides)
         const speed = overrides.speed || this.projectileSpeed;
         const aoe = (overrides.aoe !== undefined) ? overrides.aoe : this.projectileAOE;
-        const range = overrides.range || 1000;
+        const range = overrides.range || this.attackRange || 1000;
         const knockback = (overrides.knockback !== undefined) ? overrides.knockback : this.knockback;
 
         // 3. Create Projectile

@@ -158,6 +158,7 @@ export const Upgrades = [
         name: 'Acoustics',
         description: '+1 Ricochet / Bounce',
         rarity: 'rare',
+        condition: (player) => !player.piercing, // Incompatible with Pierce
         apply: (player) => {
             player.projectileRicochet = (player.projectileRicochet || 0) + 1;
             console.log(`Ricochet Upgraded! New Count: ${player.projectileRicochet}`);
@@ -178,7 +179,7 @@ export const Upgrades = [
         name: 'Piercing Rounds',
         description: 'Projectiles pass through enemies',
         rarity: 'rare',
-        condition: (player) => !player.piercing, // Only if not already owned
+        condition: (player) => !player.piercing && (player.projectileRicochet || 0) === 0, // Incompatible with Ricochet
         apply: (player) => {
             player.piercing = true;
             console.log(`Piercing Upgraded!`);
