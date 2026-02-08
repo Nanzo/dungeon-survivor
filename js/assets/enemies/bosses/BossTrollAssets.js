@@ -20,68 +20,157 @@ export const BossTrollAssets = {
         ctx.arc(centerX, centerY, 100, 0, Math.PI * 2);
         ctx.fill();
 
-        // --- Draw Troll (Scaled) ---
+        /*
+        // --- OLD BOSS TROLL (Backup) ---
+        // (Code omitted)
+        */
+
+        // --- NEW FULL BODY BOSS TROLL (Redesign V2) ---
         ctx.save();
-        ctx.translate(centerX - (32 * scale), centerY - (32 * scale));
+        ctx.translate(centerX - (40 * scale), centerY - (32 * scale));
         ctx.scale(scale, scale);
 
-        // Skin (Darker Grey/Blue)
-        ctx.fillStyle = '#37474F';
+        // Palette
+        const skinColor = '#546E7A'; // Blue-Grey (Base)
+        const skinShadow = '#37474F'; // Darker
+        const skinHighlight = '#78909C'; // Lighter
+        const loinColor = '#3E2723';
+        const beltColor = '#000';
+        const boneColor = '#ECEFF1';
+        const woodColor = '#4E342E';
+        const stoneColor = '#90A4AE';
+
+        // 1. Rear Leg (Right visual)
+        ctx.fillStyle = skinShadow;
         ctx.beginPath();
-        ctx.ellipse(32, 36, 20, 18, 0, 0, Math.PI * 2);
+        ctx.moveTo(45, 35);
+        ctx.lineTo(55, 35);
+        ctx.lineTo(52, 55); // Foot position
+        ctx.lineTo(42, 55);
+        ctx.fill();
+        // Foot
+        ctx.beginPath(); ctx.moveTo(42, 55); ctx.lineTo(54, 55); ctx.lineTo(56, 60); ctx.lineTo(40, 60); ctx.fill();
+
+        // 2. Front Leg (Left visual)
+        ctx.fillStyle = skinColor;
+        ctx.beginPath();
+        ctx.moveTo(25, 35);
+        ctx.lineTo(38, 35);
+        ctx.lineTo(36, 55); // Foot position
+        ctx.lineTo(22, 55);
+        ctx.fill();
+        // Knee highlight
+        ctx.fillStyle = skinHighlight;
+        ctx.beginPath(); ctx.arc(30, 42, 4, 0, Math.PI * 2); ctx.fill();
+        // Foot
+        ctx.fillStyle = skinColor;
+        ctx.beginPath(); ctx.moveTo(22, 55); ctx.lineTo(38, 55); ctx.lineTo(40, 60); ctx.lineTo(20, 60); ctx.fill();
+        // Toenails
+        ctx.fillStyle = '#111';
+        ctx.fillRect(20, 58, 3, 2); ctx.fillRect(26, 58, 3, 2); ctx.fillRect(32, 58, 3, 2);
+
+        // 3. Loincloth
+        ctx.fillStyle = loinColor;
+        ctx.beginPath();
+        ctx.moveTo(20, 35); ctx.lineTo(50, 35); ctx.lineTo(35, 50); ctx.fill();
+        // Belt with Skulls
+        ctx.fillStyle = beltColor;
+        ctx.fillRect(20, 33, 30, 4);
+        // Skull Buckle
+        ctx.fillStyle = boneColor;
+        ctx.beginPath(); ctx.arc(35, 35, 4, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#000';
+        ctx.fillRect(34, 34, 1, 1); ctx.fillRect(36, 34, 1, 1);
+
+        // 4. Torso (Hunched, Massive Chest)
+        ctx.fillStyle = skinColor;
+        ctx.beginPath();
+        ctx.moveTo(20, 35); // Hip L
+        ctx.lineTo(50, 35); // Hip R
+        ctx.lineTo(60, 15); // Shoulder R
+        ctx.lineTo(10, 15); // Shoulder L
         ctx.fill();
 
-        // Warts (Red/Gross)
-        ctx.fillStyle = '#C62828';
-        ctx.beginPath(); ctx.arc(20, 30, 2, 0, Math.PI * 2); ctx.fill();
-        ctx.beginPath(); ctx.arc(44, 40, 3, 0, Math.PI * 2); ctx.fill();
-        ctx.beginPath(); ctx.arc(32, 45, 2, 0, Math.PI * 2); ctx.fill();
+        // Pectorals
+        ctx.fillStyle = skinHighlight;
+        ctx.beginPath(); ctx.arc(25, 22, 8, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(45, 22, 8, 0, Math.PI * 2); ctx.fill();
 
-        // Mohawk (Fiery Red)
-        ctx.fillStyle = '#D50000'; // Bright Red
+        // Abs
+        ctx.fillStyle = skinShadow;
+        ctx.fillRect(30, 28, 4, 2); ctx.fillRect(36, 28, 4, 2);
+        ctx.fillRect(30, 32, 4, 2); ctx.fillRect(36, 32, 4, 2);
+
+        // 5. Head (Low, sunken into shoulders)
+        ctx.fillStyle = skinColor;
         ctx.beginPath();
-        ctx.moveTo(32, 18);
-        ctx.lineTo(20, 5); ctx.lineTo(25, 16);
-        ctx.lineTo(32, 2); ctx.lineTo(39, 16);
-        ctx.lineTo(44, 5); ctx.lineTo(32, 20);
+        ctx.ellipse(35, 12, 10, 9, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // Big Nose
-        ctx.fillStyle = '#546E7A';
-        ctx.beginPath(); ctx.arc(32, 34, 6, 0, Math.PI * 2); ctx.fill();
+        // Jaw (Big underbite)
+        ctx.beginPath();
+        ctx.moveTo(28, 16); ctx.lineTo(42, 16); ctx.lineTo(40, 24); ctx.lineTo(30, 24); ctx.fill();
 
-        // Tusks (Huge)
-        ctx.fillStyle = '#FFF59D';
-        ctx.beginPath(); ctx.moveTo(28, 42); ctx.lineTo(26, 28); ctx.lineTo(30, 42); ctx.fill();
-        ctx.beginPath(); ctx.moveTo(36, 42); ctx.lineTo(38, 28); ctx.lineTo(34, 42); ctx.fill();
+        // Tusks (Huge, sticking up)
+        ctx.fillStyle = boneColor;
+        ctx.beginPath(); ctx.moveTo(29, 18); ctx.lineTo(28, 10); ctx.lineTo(32, 18); ctx.fill(); // L
+        ctx.beginPath(); ctx.moveTo(41, 18); ctx.lineTo(42, 10); ctx.lineTo(38, 18); ctx.fill(); // R
 
-        // Eyes (Red)
-        ctx.fillStyle = '#FF0000';
-        ctx.shadowColor = 'red';
-        ctx.shadowBlur = 5;
-        ctx.beginPath(); ctx.arc(26, 28, 2, 0, Math.PI * 2); ctx.fill();
-        ctx.beginPath(); ctx.arc(38, 28, 2, 0, Math.PI * 2); ctx.fill();
-        ctx.shadowBlur = 0;
+        // Eyes (Small, red)
+        ctx.fillStyle = '#D50000';
+        ctx.fillRect(30, 12, 2, 2); ctx.fillRect(38, 12, 2, 2);
+
+        // Brow Ridge (Heavy)
+        ctx.strokeStyle = skinShadow;
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(28, 10); ctx.lineTo(42, 10); ctx.stroke();
+
+        // 6. Arms
+
+        // Right Arm (Background, straight down)
+        ctx.fillStyle = skinShadow;
+        ctx.fillRect(56, 15, 12, 25);
+        ctx.beginPath(); ctx.arc(62, 40, 8, 0, Math.PI * 2); ctx.fill(); // Fist
+
+        // Left Arm (Foreground, holding Giant Club)
+        ctx.fillStyle = skinColor;
+        // Shoulder
+        ctx.beginPath(); ctx.arc(12, 16, 10, 0, Math.PI * 2); ctx.fill();
+        // Bicep/Forearm (Angled out)
+        ctx.save();
+        ctx.translate(12, 16);
+        ctx.rotate(-Math.PI / 6);
+        ctx.fillRect(-6, 0, 12, 20); // Arm
+        ctx.beginPath(); ctx.arc(0, 20, 8, 0, Math.PI * 2); ctx.fill(); // Hand
+
+        // 7. Weapon: Giant Stone-Studded Club
+        ctx.rotate(Math.PI / 2); // Perpendicular to arm
+        ctx.translate(-5, 0); // Grip adjustment
+
+        // Handle
+        ctx.fillStyle = woodColor;
+        ctx.fillRect(0, -2, 40, 6);
+
+        // Club Head (Stone Block)
+        ctx.fillStyle = stoneColor;
+        ctx.beginPath();
+        ctx.moveTo(25, -10); ctx.lineTo(55, -12);
+        ctx.lineTo(58, 12); ctx.lineTo(28, 14);
+        ctx.fill();
+
+        // Cracks/Texture
+        ctx.strokeStyle = '#546E7A';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(30, 0); ctx.lineTo(40, -5); ctx.stroke();
+
+        // Spikes on Club
+        ctx.fillStyle = boneColor;
+        ctx.beginPath(); ctx.moveTo(28, -10); ctx.lineTo(26, -16); ctx.lineTo(34, -10); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(50, -12); ctx.lineTo(52, -18); ctx.lineTo(54, -12); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(40, 13); ctx.lineTo(42, 19); ctx.lineTo(46, 13); ctx.fill();
 
         ctx.restore();
 
-        // --- Crown (Crude Iron/Gold) ---
-        ctx.save();
-        ctx.translate(centerX, centerY - (28 * scale));
-        ctx.fillStyle = '#B8860B'; // Dark Gold
-        ctx.strokeStyle = '#000';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(-10, 0);
-        ctx.lineTo(-10, -8);
-        ctx.lineTo(-5, -4);
-        ctx.lineTo(0, -10);
-        ctx.lineTo(5, -4);
-        ctx.lineTo(10, -8);
-        ctx.lineTo(10, 0);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
         ctx.restore();
 
         return c;

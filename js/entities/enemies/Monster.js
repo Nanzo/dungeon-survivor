@@ -2,7 +2,7 @@ import { Enemy } from '../base/Enemy.js';
 import { Assets } from '../../core/Assets.js';
 
 export class Monster extends Enemy {
-    constructor(game, config, level = 1) {
+    constructor(game, config, level = 1, fortification = 0, isRare = false) {
         super(game);
 
         // Base Stats from Config
@@ -13,6 +13,14 @@ export class Monster extends Enemy {
 
         // Boss Flag
         this.isBoss = config.isBoss || false;
+
+        // Rare Flag (Enraged)
+        // Bosses cannot be rare/enraged yet
+        this.isRare = isRare && !this.isBoss;
+
+        if (this.isRare) {
+            this.name = "Enraged " + this.name;
+        }
 
         // Asset Generation
         if (config.assetKey) {
@@ -25,19 +33,43 @@ export class Monster extends Enemy {
 
         // --- Scaling Logic ---
         // Level 1 stats are defined in 'config'
-        // We scale them based on 'level'
-        const hpScale = config.hpScale || 5; // HP per level
-        const xpScale = config.xpScale || 2; // XP per level
-        const dmgScale = config.dmgScale || 0.5; // Damage per level (slow growth)
+        // 'level' param is player level (maybe unused now for scaling? or kept for speed limit?)
+        // 'fortification' is minutes since this mob type was introduced.
 
-        this.maxHp = (config.hp || 10) + ((level - 1) * hpScale);
-        this.attackPower = (config.damage || 5) + ((level - 1) * dmgScale);
-        this.xpValue = (config.xp || 10) + ((level - 1) * xpScale);
+        const hpScale = config.hpScale || 5;
+        const xpScale = config.xpScale || 2;
+        const dmgScale = config.dmgScale || 0.5;
+
+        // Base + Fortification
+        // If fortification is 0 (just unlocked), it uses base.
+        // If fortification is 3 (3 mins since unlock), it adds 3x scale.
+
+        // Note: We might still want to add (level-1) scaling if we want them to scale with player TOO?
+        // User request: "Rato aos 1:00 nasce com status base + fortificação de 1 minuto".
+        // Use ONLY fortification for scaling.
+
+        let hp = (config.hp || 10) + (fortification * hpScale);
+        let atk = (config.damage || 5) + (fortification * dmgScale);
+        let xp = (config.xp || 10) + (fortification * xpScale);
+
+        // Apply Rare Multipliers
+        if (this.isRare) {
+            hp *= 2.0;
+            atk *= 1.5;
+            xp *= 3.0;
+
+            // Visual Tint for Logic
+            this.filter = "sepia(1) saturate(5) hue-rotate(-50deg)"; // Reddish/Orange tint
+        }
+
+        this.maxHp = hp;
+        this.attackPower = atk;
+        this.xpValue = xp;
 
         // BOSS MULTIPLIERS
         if (this.isBoss) {
-            this.width *= 3.0; // 3x Bigger
-            this.height *= 3.0;
+            this.width *= 4.0; // 4x Bigger (Exact)
+            this.height *= 4.0;
             this.maxHp *= 5.0;
             this.attackPower *= 2.0;
             this.xpValue *= 10.0;

@@ -44,13 +44,15 @@ export class Player extends Entity {
         }
     }
 
-    heal(amount) {
+    heal(amount, source = 'unknown') {
         if (this.hp >= this.maxHp) return;
         const oldHp = this.hp;
         this.hp = Math.min(this.maxHp, this.hp + amount);
         const healedAmount = this.hp - oldHp;
         if (healedAmount > 0) {
             this.game.showHeal(this.x + this.width / 2, this.y, Math.ceil(healedAmount));
+            // Log for Simulation (via Game hook or monkey patch on Player)
+            if (this.game.recordHeal) this.game.recordHeal(healedAmount, source);
         }
     }
 
@@ -69,7 +71,7 @@ export class Player extends Entity {
         if (this.hpRegen > 0 && this.hp < this.maxHp) {
             this.regenTimer += deltaTime;
             if (this.regenTimer >= 1000) {
-                this.heal(this.hpRegen);
+                this.heal(this.hpRegen, 'passive_regen');
                 this.regenTimer = 0;
             }
         }
@@ -77,20 +79,40 @@ export class Player extends Entity {
         let dx = 0;
         let dy = 0;
 
-        // Horizontal movement
-        if (input.isDown('ArrowRight') || input.isDown('d')) {
-            dx = this.speed;
-        }
-        if (input.isDown('ArrowLeft') || input.isDown('a')) {
-            dx = -this.speed;
+        // Check Joystick First
+        const joystick = input.getJoystick();
+        if (joystick.x !== 0 || joystick.y !== 0) {
+            dx = joystick.x * this.speed;
+            dy = joystick.y * this.speed;
+        } else {
+            // Keyboard Fallback
+            // Horizontal movement
+            if (input.isDown('ArrowRight') || input.isDown('d')) {
+                dx = this.speed;
+            }
+            if (input.isDown('ArrowLeft') || input.isDown('a')) {
+                dx = -this.speed;
+            }
+
+            // Vertical movement
+            if (input.isDown('ArrowUp') || input.isDown('w')) {
+                dy = -this.speed;
+            }
+            if (input.isDown('ArrowDown') || input.isDown('s')) {
+                dy = this.speed;
+            }
+
+            // Normalize diagonal speed (Only for Keyboard)
+            if (dx !== 0 && dy !== 0) {
+                dx *= 0.7071; // 1 / sqrt(2)
+                dy *= 0.7071;
+            }
         }
 
-        // Vertical movement
-        if (input.isDown('ArrowUp') || input.isDown('w')) {
-            dy = -this.speed;
-        }
-        if (input.isDown('ArrowDown') || input.isDown('s')) {
-            dy = this.speed;
+        // Normalize diagonal speed
+        if (dx !== 0 && dy !== 0) {
+            dx *= 0.7071; // 1 / sqrt(2)
+            dy *= 0.7071;
         }
 
         // Apply movement with collision check
@@ -159,6 +181,7 @@ export class Player extends Entity {
             piercing: this.piercing,
             knockback: knockback,
             isCrit: isCrit,
+            source: this._currentAttackSource || extras.source, // Use context flag or passed extra
             ...extras // Allow passing other things if needed
         };
 

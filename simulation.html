@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dungeon Survivor Simulation</title>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: white;
+            font-family: sans-serif;
+            padding: 20px;
+        }
+
+        h1 {
+            color: gold;
+        }
+
+        .config-box {
+            background: #333;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #555;
+        }
+
+        .class-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        input[type="number"] {
+            padding: 5px;
+            background: #222;
+            color: white;
+            border: 1px solid #555;
+            width: 60px;
+        }
+
+        button#btnRun {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            background: #2E8B57;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button#btnRun:hover {
+            background: #3aa66b;
+        }
+
+        button#btnRun:disabled {
+            background: #555;
+            cursor: not-allowed;
+        }
+
+        #status {
+            margin-top: 20px;
+            padding: 10px;
+            background: #222;
+            border: 1px solid #444;
+            min-height: 50px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+
+        #progressBar {
+            width: 100%;
+            height: 20px;
+            background: #444;
+            margin-top: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            display: none;
+        }
+
+        #progressFill {
+            width: 0%;
+            height: 100%;
+            background: cyan;
+            transition: width 0.1s;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Simulation Config</h1>
+
+    <div class="config-box">
+        <h3>1. Simulation Settings</h3>
+        <label>Iterations per Class: <input type="number" id="iterInput" value="100" min="1"></label>
+    </div>
+
+    <div class="config-box">
+        <h3>2. Select Classes</h3>
+        <button onclick="document.querySelectorAll('.class-check').forEach(c => c.checked = true)">Select All</button>
+        <button onclick="document.querySelectorAll('.class-check').forEach(c => c.checked = false)">Deselect
+            All</button>
+        <div id="classGrid" class="class-grid">
+            <!-- Injected by JS -->
+        </div>
+    </div>
+
+    <button id="btnRun">Run Simulation</button>
+
+    <div id="progressBar">
+        <div id="progressFill"></div>
+    </div>
+    <div id="status">Ready.</div>
+
+    <!-- Mocks for Game.js DOM requirements -->
+    <div style="display:none">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div id="gameHUD">
+            <span id="hudLevel"></span>
+            <span id="hudHp"></span>
+            <span id="hudAtk"></span>
+            <span id="hudDef"></span>
+            <span id="hudSpd"></span>
+            <span id="hudAtkSpd"></span>
+            <span id="hudRange"></span>
+            <span id="hudProjSpd"></span>
+            <span id="hudCritRate"></span>
+            <span id="hudCritDmg"></span>
+            <span id="hudMulti"></span>
+            <span id="hudPierce"></span>
+            <span id="hudKB"></span>
+            <span id="hudSlow"></span>
+            <span id="hudFreeze"></span>
+            <span id="hudRegen"></span>
+            <span id="hudLoK"></span>
+            <span id="hudRicochet"></span>
+            <span id="hudDbl"></span>
+            <span id="hudPoison"></span>
+            <span id="hudBlock"></span>
+            <span id="hudAOE"></span>
+            <div id="xpBarFill"></div>
+            <span id="xpText"></span>
+            <span id="hudTimer"></span>
+            <span id="hudDPS"></span>
+        </div>
+        <div id="gameOverScreen">
+            <span id="goClassName"></span>
+            <div id="goClassIcon"></div>
+            <span id="goLevel"></span>
+            <span id="goTime"></span>
+            <div id="goFinalStats"></div>
+            <div id="goUpgrades"></div>
+        </div>
+        <div id="pauseMenu"></div>
+        <div id="levelUpScreen"></div>
+    </div>
+
+    <script type="module" src="js/simulation.js"></script>
+</body>
+
+</html>

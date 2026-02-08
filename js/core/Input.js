@@ -18,4 +18,13 @@ export class Input {
     isDown(key) {
         return this.keys.includes(key);
     }
+
+    // Joystick Support
+    setJoystick(x, y) {
+        this.joystick = { x, y };
+    }
+
+    getJoystick() {
+        return this.joystick || { x: 0, y: 0 };
+    }
 }
