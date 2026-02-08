@@ -33,6 +33,10 @@ import { BossSkeletonAssets } from '../assets/enemies/bosses/BossSkeletonAssets.
 import { BossOrcAssets } from '../assets/enemies/bosses/BossOrcAssets.js';
 import { BossGhostAssets } from '../assets/enemies/bosses/BossGhostAssets.js';
 import { BossTrollAssets } from '../assets/enemies/bosses/BossTrollAssets.js';
+import { BossVampireAssets } from '../assets/enemies/bosses/BossVampireAssets.js';
+import { BossBeholderAssets } from '../assets/enemies/bosses/BossBeholderAssets.js';
+import { BossHydraAssets } from '../assets/enemies/bosses/BossHydraAssets.js';
+import { BossDragonAssets } from '../assets/enemies/bosses/BossDragonAssets.js';
 
 console.log("Assets Loaded");
 
@@ -112,11 +116,10 @@ export class Assets {
                 case 'orc': return BossOrcAssets.generateBossOrc();
                 case 'ghost': return BossGhostAssets.generateBossGhost();
                 case 'troll': return BossTrollAssets.generateBossTroll();
-                // Fallbacks for un-implemented Boss Assets (will be scaled normal assets)
-                case 'vampire': return VampireAssets.generateVampire();
-                case 'beholder': return BeholderAssets.generateBeholder();
-                case 'hydra': return HydraAssets.generateHydra();
-                case 'dragon': return DragonAssets.generateDragon();
+                case 'vampire': return BossVampireAssets.generateBossVampire();
+                case 'beholder': return BossBeholderAssets.generateBossBeholder();
+                case 'hydra': return BossHydraAssets.generateBossHydra();
+                case 'dragon': return BossDragonAssets.generateBossDragon();
                 default: return BossRatAssets.generateBossRat();
             }
         } else {

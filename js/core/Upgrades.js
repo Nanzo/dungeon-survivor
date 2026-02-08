@@ -2,33 +2,34 @@ export const Upgrades = [
     {
         id: 'strength',
         name: 'Strength',
-        description: 'Increase Damage by 10%',
-        rarity: 'common', // Reverted to Common (Nerfed)
+        description: 'Increase Damage by 5 (Flat)',
+        rarity: 'common',
+        condition: (player) => player.attackPower < 100,
         apply: (player) => {
-            player.attackPower = Math.ceil(player.attackPower * 1.1);
+            player.attackPower += 5;
             console.log(`Strength Upgraded! New Damage: ${player.attackPower}`);
         }
     },
     {
         id: 'haste',
         name: 'Haste',
-        description: 'Increase Attack Speed by 15%',
-        rarity: 'common', // Downgraded rarity (User Request)
+        description: 'Reduce Attack Delay by 0.05s',
+        rarity: 'common',
+        condition: (player) => player.attackSpeed > 0.2,
         apply: (player) => {
-            player.attackSpeed = Math.max(0.1, player.attackSpeed * 0.85); // Lower is faster
+            player.attackSpeed = Math.max(0.1, player.attackSpeed - 0.05);
             console.log(`Haste Upgraded! New Speed: ${player.attackSpeed.toFixed(2)}s`);
         }
     },
     {
         id: 'vitality',
         name: 'Vitality',
-        description: 'Increase Max HP by 10% & Heal',
-        rarity: 'common', // Reverted to Common (Nerfed)
+        description: 'Increase Max HP by 25 & Heal',
+        rarity: 'common',
+        condition: (player) => player.maxHp < 500,
         apply: (player) => {
-            const oldMax = player.maxHp;
-            player.maxHp = Math.ceil(player.maxHp * 1.1);
-            player.hp += (player.maxHp - oldMax) + 10;
-            if (player.hp > player.maxHp) player.hp = player.maxHp;
+            player.maxHp += 25;
+            player.hp += 25;
             console.log(`Vitality Upgraded! New MaxHP: ${player.maxHp}`);
         }
 
@@ -38,6 +39,7 @@ export const Upgrades = [
         name: 'Reinforced Armor',
         description: 'Increase Defense by 5',
         rarity: 'common',
+        condition: (player) => player.defense < 50,
         apply: (player) => {
             player.defense += 5;
             console.log(`Armor Upgraded! New Defense: ${player.defense}`);
@@ -57,10 +59,11 @@ export const Upgrades = [
     {
         id: 'swiftness',
         name: 'Swiftness',
-        description: 'Increase Move Speed by 10%',
-        rarity: 'common', // Reverted to common per user request
+        description: 'Increase Move Speed by 0.5',
+        rarity: 'common',
+        condition: (player) => player.speed < 10,
         apply: (player) => {
-            player.speed *= 1.1;
+            player.speed += 0.5;
             console.log(`Swiftness Upgraded! New Speed: ${player.speed.toFixed(2)}`);
         }
     },
@@ -69,6 +72,7 @@ export const Upgrades = [
         name: 'Scope',
         description: 'Increase Attack Range by 100',
         rarity: 'uncommon',
+        condition: (player) => (player.attackRange || 0) < 800,
         apply: (player) => {
             player.attackRange += 100;
             console.log(`Scope Upgraded! New Range: ${player.attackRange}`);
@@ -79,6 +83,7 @@ export const Upgrades = [
         name: 'Explosive Rounds',
         description: 'Increase Blast Radius by 50',
         rarity: 'rare',
+        condition: (player) => (player.projectileAOE || 0) < 600,
         apply: (player) => {
             player.projectileAOE += 50;
             console.log(`Explosive Upgraded! New AOE: ${player.projectileAOE}`);
@@ -89,6 +94,7 @@ export const Upgrades = [
         name: 'High Velocity',
         description: 'Increase Projectile Speed by 1',
         rarity: 'common', // Downgraded
+        condition: (player) => player.projectileSpeed < 15,
         apply: (player) => {
             player.projectileSpeed += 1;
             console.log(`Velocity Upgraded! New ProjSpeed: ${player.projectileSpeed}`);
@@ -99,6 +105,7 @@ export const Upgrades = [
         name: 'Multishot',
         description: '+1 Projectile (Extra shots hit random nearby enemies)',
         rarity: 'legendary', // Lengendary upgrade!
+        condition: (player) => (player.projectileCount || 1) < 5,
         apply: (player) => {
             player.projectileCount = (player.projectileCount || 1) + 1;
             console.log(`Multishot Upgraded! Total Projectiles: ${player.projectileCount}`);
@@ -109,6 +116,7 @@ export const Upgrades = [
         name: 'Heavy Impact',
         description: 'Increase Knockback by 25',
         rarity: 'rare',
+        condition: (player) => (player.knockback || 0) < 150,
         apply: (player) => {
             player.knockback = (player.knockback || 0) + 25;
             console.log(`Knockback Upgraded! New Knockback: ${player.knockback}`);
@@ -117,10 +125,11 @@ export const Upgrades = [
     {
         id: 'deep_freeze',
         name: 'Deep Freeze',
-        description: '+1.0s Freeze Duration',
+        description: '+0.5s Freeze Duration',
         rarity: 'epic',
+        condition: (player) => (player.freezeDuration || 0) < 3000,
         apply: (player) => {
-            player.freezeDuration = (player.freezeDuration || 0) + 1000;
+            player.freezeDuration = (player.freezeDuration || 0) + 500;
             console.log(`Freeze Upgraded! New Duration: ${player.freezeDuration}ms`);
         }
     },
@@ -129,6 +138,7 @@ export const Upgrades = [
         name: 'Lethal Precision',
         description: '+10% Crit Chance',
         rarity: 'uncommon',
+        condition: (player) => (player.critChance || 0) < 1.0,
         apply: (player) => {
             player.critChance = (player.critChance || 0) + 0.10;
             console.log(`Crit Chance Upgraded! New Chance: ${player.critChance}`);
@@ -139,6 +149,7 @@ export const Upgrades = [
         name: 'Brutal Impact',
         description: '+25% Crit Damage',
         rarity: 'uncommon',
+        condition: (player) => (player.critDamage || 0) < 5.0,
         apply: (player) => {
             player.critDamage = (player.critDamage || 1.5) + 0.25;
             console.log(`Crit Damage Upgraded! New Damage: ${player.critDamage}`);
@@ -149,6 +160,9 @@ export const Upgrades = [
         name: 'Blessed Aura',
         description: '+2 HP Regen / Sec',
         rarity: 'uncommon', // Changed to Uncommon per user request
+        description: '+2 HP Regen / Sec',
+        rarity: 'uncommon', // Changed to Uncommon per user request
+        condition: (player) => (player.hpRegen || 0) < 30,
         apply: (player) => {
             player.hpRegen = (player.hpRegen || 0) + 2;
             console.log(`HpRegen Upgraded! New Regen: ${player.hpRegen}/s`);
@@ -157,10 +171,11 @@ export const Upgrades = [
     {
         id: 'divine_favor',
         name: 'Divine Favor',
-        description: '+10 HP on Kill',
+        description: '+5 HP on Kill',
         rarity: 'rare',
+        condition: (player) => (player.lifeOnKill || 0) < 30,
         apply: (player) => {
-            player.lifeOnKill = (player.lifeOnKill || 0) + 10;
+            player.lifeOnKill = (player.lifeOnKill || 0) + 5;
             console.log(`LifeOnKill Upgraded! New Lifesteal: ${player.lifeOnKill}`);
         }
     },
@@ -169,7 +184,7 @@ export const Upgrades = [
         name: 'Acoustics',
         description: '+1 Ricochet / Bounce',
         rarity: 'epic', // Epic
-        condition: (player) => !player.piercing, // Incompatible with Pierce
+        condition: (player) => (player.projectileRicochet || 0) < 5,
         apply: (player) => {
             player.projectileRicochet = (player.projectileRicochet || 0) + 1;
             console.log(`Ricochet Upgraded! New Count: ${player.projectileRicochet}`);
@@ -180,6 +195,7 @@ export const Upgrades = [
         name: 'Combo Strike',
         description: '+1 Extra Hit per Attack (Stackable!)',
         rarity: 'legendary', // Legendary
+        condition: (player) => (player.extraStrikes || 0) < 5,
         apply: (player) => {
             player.extraStrikes = (player.extraStrikes || 0) + 1;
             console.log(`Combo Strike Upgraded! Total Extra Strikes: ${player.extraStrikes}`);
@@ -188,9 +204,9 @@ export const Upgrades = [
     {
         id: 'piercing_rounds',
         name: 'Piercing Rounds',
-        description: 'Projectiles pass through enemies',
-        rarity: 'epic', // Epic
-        condition: (player) => !player.piercing && (player.projectileRicochet || 0) === 0, // Incompatible with Ricochet
+        description: 'Projectiles pass through enemies. Triggers explosions on EVERY hit if you have AOE!',
+        rarity: 'legendary', // Legendary
+        condition: (player) => !player.piercing,
         apply: (player) => {
             player.piercing = true;
             console.log(`Piercing Upgraded!`);
@@ -201,6 +217,7 @@ export const Upgrades = [
         name: 'Venomous Strike',
         description: 'Attacks apply Poison (3 dmg / 0.5s for 3s)',
         rarity: 'uncommon',
+        condition: (player) => (player.poisonDamage || 0) < 50,
         apply: (player) => {
             if (player.poisonDuration > 0) {
                 player.poisonDamage += 3;
@@ -217,7 +234,7 @@ export const Upgrades = [
         name: 'Crippling Shot',
         description: 'Attacks Slow enemies by 15% for 1.5s',
         rarity: 'rare', // User requested Blue (Rare)
-        condition: (player) => (player.slowPercent || 0) < 1.0, // Stop at 100%
+        condition: (player) => (player.slowPercent || 0) < 0.8, // Stop at 80%
         apply: (player) => {
             player.slowDuration = 1500; // Standardized to 1.5s
             player.slowPercent = Math.min(1.0, (player.slowPercent || 0) + 0.10);

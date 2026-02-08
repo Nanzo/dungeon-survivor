@@ -30,7 +30,9 @@ export class Entity {
 
     draw(ctx) {
         if (this.image) {
-            ctx.drawImage(this.image, this.x - (64 - this.width) / 2, this.y - (64 - this.height) / 2, 64, 64);
+            // Draw image scaled to entity size
+            // Assuming the source image is 64x64 (standard for this pack), but we scale destination
+            ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
         } else {
             ctx.fillStyle = 'white';
             ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -76,7 +78,7 @@ export class Entity {
                 // 3. Fire Projectiles
                 const count = this.projectileCount || 1;
 
-                const fireVolley = () => {
+                const fireVolley = (sourceType) => {
                     // New "Multishot" Logic:
                     // Fire at 'count' unique targets (closest first).
                     // If we have fewer targets than projectiles, we simply fire fewer projectiles.
@@ -84,13 +86,22 @@ export class Entity {
 
                     const targetsToHit = targetsInRange.slice(0, count);
 
-                    targetsToHit.forEach(target => {
+                    targetsToHit.forEach((target, index) => {
+                        // Determine precise source
+                        let finalSource = sourceType;
+                        if (sourceType === 'direct_hit' && index > 0) {
+                            finalSource = 'multishot';
+                        }
+
+                        // Set Context Flag (read by spawnProjectile)
+                        this._currentAttackSource = finalSource;
                         this.performAttack(target);
+                        this._currentAttackSource = null; // Clear
                     });
                 };
 
                 // Immediate Volley
-                fireVolley();
+                fireVolley('direct_hit');
 
                 // Extra Strikes Logic (Stackable!)
                 // If player has extraStrikes (Monk starts with 1, Upgrades add more)
@@ -98,7 +109,7 @@ export class Entity {
                     for (let i = 1; i <= this.extraStrikes; i++) {
                         setTimeout(() => {
                             if (!this.game.isPaused && !this.game.isGameOver) {
-                                fireVolley();
+                                fireVolley('extra_strike');
                             }
                         }, 100 * i); // 100ms delay between each extra strike (Rapid fire combo!)
                     }
@@ -115,19 +126,27 @@ export class Entity {
         target.takeDamage(damage);
     }
 
-    takeDamage(amount, isCrit = false, colorOverride = null, offsetY = 0) {
+    takeDamage(amount, isCrit = false, colorOverride = null, offsetY = 0, source = 'unknown') {
         // Apply Damage Reduction (if any)
         if (this.damageReduction > 0) {
             amount = Math.max(0, amount * (1 - this.damageReduction));
         }
 
+        if (this.hp <= 0) return; // Already dead
+
         this.hp -= amount;
-        if (this.hp <= 0) {
-            this.hp = 0;
-            this.markedForDeletion = true; // For enemies
-        }
-        const color = colorOverride || this.damageTextColor;
+
+        const color = colorOverride || this.damageTextColor || '#fff';
         this.game.showDamage(this.x + this.width / 2, this.y, Math.round(amount), isCrit, color, offsetY);
+
+        // Record damage for DPS tracking
+        if (this.game.recordDamage) {
+            this.game.recordDamage(amount, source, isCrit);
+        }
+
+        if (this.hp <= 0) {
+            this.markedForDeletion = true;
+        }
     }
 
     applyKnockback(force, sourceX, sourceY) {

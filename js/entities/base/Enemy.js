@@ -50,7 +50,7 @@ export class Enemy extends Entity {
 
         // Immediate Tick (Show Green Number on Impact)
         // Offset Y by -25 so it appears ABOVE the projectile hit damage (which is at 0 offset)
-        this.takeDamage(this.poisonDamage, false, '#0f0', -25);
+        this.takeDamage(this.poisonDamage, false, '#0f0', -25, 'poison_dot');
 
         this.poisonTickRate = 500; // Tick every 500ms
         this.poisonTickTimer = 500; // Wait full cycle for next tick
@@ -85,7 +85,7 @@ export class Enemy extends Entity {
 
             if (this.poisonTickTimer <= 0) {
                 console.log(`[Enemy ${this.id}] Poison Tick! Taking ${this.poisonDamage} dmg.`);
-                this.takeDamage(this.poisonDamage, false, '#0f0'); // Green damage text via override
+                this.takeDamage(this.poisonDamage, false, '#0f0', 0, 'poison_dot'); // Green damage text via override
                 this.poisonTickTimer = this.poisonTickRate; // Reset tick
             }
 
@@ -127,7 +127,23 @@ export class Enemy extends Entity {
             }
 
             // Draw image centered at (0,0) relative to translation
-            ctx.drawImage(this.image, -32, -32, 64, 64);
+            // Draw image centered at (0,0) relative to translation
+            if (this.filter) {
+                ctx.filter = this.filter;
+            }
+
+            if (this.isBoss) {
+                // Draw Boss Sprite (Scales with hitbox)
+                ctx.drawImage(this.image, -this.width / 2, -this.height / 2, this.width, this.height);
+            } else {
+                // Standard enemies draw at fixed 64x64 to maintain original look regardless of hitbox
+                ctx.drawImage(this.image, -32, -32, 64, 64);
+            }
+
+            // Reset filter
+            if (this.filter) {
+                ctx.filter = 'none';
+            }
 
             ctx.restore();
         } else {

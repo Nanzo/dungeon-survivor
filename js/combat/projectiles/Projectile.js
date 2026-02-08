@@ -19,6 +19,7 @@ export class Projectile {
         this.piercing = options.piercing || false;
         this.knockback = options.knockback || 0;
         this.isCrit = options.isCrit || false;
+        this.sourceType = options.source || null; // Store source (Multishot, ExtraStrike, etc)
 
         this.markedForDeletion = false;
 
@@ -83,34 +84,74 @@ export class Projectile {
     onHit(enemy) {
         // Base Hit Logic
         if (this.piercing) {
-            this.applyEffects(enemy);
+            if (this.aoeRadius > 0) {
+                // Explode but don't destroy projectile
+                this.explode(enemy, false);
+            } else {
+                this.applyEffects(enemy, 'pierce_shot');
+            }
             this.hitList.add(enemy.id);
         } else if (this.ricochetCount > 0) {
             this.handleRicochet(enemy);
         } else if (this.aoeRadius > 0) {
-            this.explode(enemy);
+            this.explode(enemy, true);
         } else {
             // Single target hit
-            this.applyEffects(enemy);
+            this.applyEffects(enemy, 'direct_hit');
             this.markedForDeletion = true;
         }
     }
 
     onMaxRangeReached() {
+        // If piercing and has ricochets, bounce to nearest enemy
+        if (this.piercing && this.ricochetCount > 0) {
+            this.ricochetFromCurrentPosition();
+            return;
+        }
+
         this.markedForDeletion = true;
-        // If piercing and explosive, explode at end
-        if (this.piercing && this.aoeRadius > 0) {
-            this.explode();
+        // No blast at max range for piercing
+    }
+
+    ricochetFromCurrentPosition() {
+        let nearest = null;
+        let minDist = Infinity;
+
+        // Iterate all enemies to find absolute nearest
+        for (const other of this.game.enemies) {
+            const dist = Math.hypot(other.x - this.x, other.y - this.y);
+            if (dist < minDist) {
+                minDist = dist;
+                nearest = other;
+            }
+        }
+
+        if (nearest) {
+            const dx = nearest.x + nearest.width / 2 - (this.x + this.width / 2);
+            const dy = nearest.y + nearest.height / 2 - (this.y + this.height / 2);
+            const dist = Math.hypot(dx, dy);
+
+            this.vx = (dx / dist) * this.speed;
+            this.vy = (dy / dist) * this.speed;
+
+            this.startX = this.x;
+            this.startY = this.y;
+
+            // Critical: Clear hit list so we can damage them again on the new pass
+            this.hitList.clear();
+            this.ricochetCount--;
+            this.markedForDeletion = false;
+        } else {
+            this.markedForDeletion = true;
         }
     }
 
     handleRicochet(enemy) {
         if (this.aoeRadius > 0) {
-            this.explode(enemy);
-            this.markedForDeletion = false; // Keep bouncing if possible? Or logic suggests AOE consumes? 
-            // Original code: allowed bounce if AOE.
+            this.explode(enemy, false); // Explode but don't destroy if ricocheting
+            // this.markedForDeletion = false; // Handled by the false param
         } else {
-            this.applyEffects(enemy);
+            this.applyEffects(enemy, 'ricochet_shot');
         }
 
         this.hitList.add(enemy.id);
@@ -149,27 +190,32 @@ export class Projectile {
         this.maxRange = this.ricochetRange; // Reset range to full bounce distance
     }
 
-    applyEffects(enemy) {
+    applyEffects(enemy, source = null) {
         // Damage & Status
-        enemy.takeDamage(this.damage, this.isCrit);
+        // Determine source if not provided
+        if (!source) source = this.sourceType || this.constructor.name; // Use passed options source or class name
+
+        enemy.takeDamage(this.damage, this.isCrit, null, 0, source);
         if (this.knockback > 0) enemy.applyKnockback(this.knockback, this.x, this.y);
 
         if (this.freezeDuration > 0) enemy.applyFreeze(this.freezeDuration);
         if (this.slowDuration > 0) enemy.applySlow(this.slowDuration, this.slowPercent);
         if (this.poisonDuration > 0) enemy.applyPoison(this.poisonDuration, this.poisonDamage);
 
-        console.log(`[Projectile] Hit Enemy ${enemy.id}. Types: ${this.constructor.name}`);
+        // console.log(`[Projectile] Hit Enemy ${enemy.id}. Source: ${source}`);
     }
 
-    explode(directHitTarget = null) {
-        this.markedForDeletion = true;
+    explode(directHitTarget = null, destroy = true) {
+        if (destroy) {
+            this.markedForDeletion = true;
+        }
 
         if (this.game.addExplosion) {
             this.game.addExplosion(this.x + this.width / 2, this.y + this.height / 2, this.aoeRadius);
         }
 
         if (directHitTarget) {
-            this.applyEffects(directHitTarget);
+            this.applyEffects(directHitTarget, 'projectile_impact');
         }
 
         for (const enemy of this.game.enemies) {
@@ -177,7 +223,7 @@ export class Projectile {
 
             const dist = Math.hypot(enemy.x + enemy.width / 2 - (this.x + this.width / 2), enemy.y + enemy.height / 2 - (this.y + this.height / 2));
             if (dist < this.aoeRadius) {
-                this.applyEffects(enemy);
+                this.applyEffects(enemy, 'explosion_aoe');
             }
         }
     }

@@ -22,7 +22,7 @@ export const BossSkeletonAssets = {
 
         // --- Draw Skeleton (Scaled) ---
         ctx.save();
-        ctx.translate(centerX - (24 * scale), centerY - (24 * scale));
+        ctx.translate(centerX - (24 * scale), centerY - (13 * scale));
         ctx.scale(scale, scale);
 
         // Bones Color (Darker/Ancient)

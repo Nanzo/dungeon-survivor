@@ -4,6 +4,7 @@ import { Assets } from './Assets.js'; // Will update Assets to export BestiaryAs
 const MONSTERS = {
     RAT: {
         name: "Rat",
+        stage: 0,
         hp: 10, hpScale: 5,
         damage: 5, dmgScale: 0.5,
         speed: 2, speedGrowth: 0,
@@ -13,15 +14,17 @@ const MONSTERS = {
     },
     GOBLIN: {
         name: "Goblin",
+        stage: 1,
         hp: 20, hpScale: 6,
         damage: 8, dmgScale: 0.8,
-        speed: 3, speedGrowth: 0.1, // Fast
+        speed: 2.2, speedGrowth: 0.1, // Adjusted from 3 (too fast)
         xp: 15, xpScale: 3,
         width: 40, height: 40,
         assetKey: 'goblin'
     },
     SKELETON: {
         name: "Skeleton",
+        stage: 2,
         hp: 40, hpScale: 8,
         damage: 12, dmgScale: 1,
         speed: 2, speedGrowth: 0,
@@ -31,6 +34,7 @@ const MONSTERS = {
     },
     ORC: {
         name: "Orc",
+        stage: 3,
         hp: 80, hpScale: 15,
         damage: 20, dmgScale: 1.5,
         speed: 1.5, speedGrowth: 0.05, // Slow, Heavy
@@ -40,6 +44,7 @@ const MONSTERS = {
     },
     GHOST: {
         name: "Ghost",
+        stage: 4,
         hp: 50, hpScale: 10,
         damage: 15, dmgScale: 1.2,
         speed: 3.5, speedGrowth: 0.1, // Very Fast
@@ -49,6 +54,7 @@ const MONSTERS = {
     },
     TROLL: {
         name: "Troll",
+        stage: 5,
         hp: 200, hpScale: 25, // Tank
         damage: 30, dmgScale: 2,
         speed: 1.2, speedGrowth: 0,
@@ -58,6 +64,7 @@ const MONSTERS = {
     },
     VAMPIRE: {
         name: "Vampire",
+        stage: 6,
         hp: 120, hpScale: 15,
         damage: 40, dmgScale: 2.5,
         speed: 4, speedGrowth: 0.1, // Zoom
@@ -67,6 +74,7 @@ const MONSTERS = {
     },
     BEHOLDER: {
         name: "Beholder",
+        stage: 7,
         hp: 300, hpScale: 30,
         damage: 50, dmgScale: 3,
         speed: 1, speedGrowth: 0,
@@ -76,6 +84,7 @@ const MONSTERS = {
     },
     HYDRA: {
         name: "Hydra",
+        stage: 8,
         hp: 400, hpScale: 40,
         damage: 40, dmgScale: 4, // Multi-hit logic not implied here, just high base
         speed: 1.5, speedGrowth: 0,
@@ -85,6 +94,7 @@ const MONSTERS = {
     },
     DRAGON: {
         name: "Dragon",
+        stage: 9,
         hp: 1000, hpScale: 100, // BOSS
         damage: 100, dmgScale: 5,
         speed: 2.5, speedGrowth: 0.1,
@@ -96,46 +106,87 @@ const MONSTERS = {
 
 export const Bestiary = {
     // Get a monster config based on current level
-    getSpawn(level) {
-        // Simple weight system?
-        // Or pure bracket system?
-        // Let's use brackets that overlap.
+    getSpawn(bossKills) {
+        // Monster Spawn Weights based on Boss Kills (Progress)
+        // Adjust weights to phase out weaker monsters as time goes on.
 
         const pool = [];
 
-        // Base: Rats always small chance? Or stop spawning?
-        // Let's keep them as fodder until lvl 10.
-        if (level < 10) pool.push({ weight: 50, type: MONSTERS.RAT });
+        // Helper to add monster with weight
+        const add = (type, weight) => {
+            if (weight > 0) pool.push({ type, weight });
+        };
 
-        // Lvl 2+: Goblins
-        if (level >= 2) pool.push({ weight: 40, type: MONSTERS.GOBLIN });
+        // --- STAGE 0: RATS (The Beginning) ---
+        // Dominant at start, rare at stage 1, GONE by stage 2 (Middle)
+        if (bossKills === 0) add(MONSTERS.RAT, 100);
+        else if (bossKills === 1) add(MONSTERS.RAT, 20);
+        else if (bossKills === 2) add(MONSTERS.RAT, 5); // Very very rare
+        // BossKills >= 3: No Rats
 
-        // Lvl 5+: Skeletons
-        if (level >= 5) pool.push({ weight: 30, type: MONSTERS.SKELETON });
-
-        // Lvl 8+: Orcs
-        if (level >= 8) pool.push({ weight: 20, type: MONSTERS.ORC });
-
-        // Lvl 12+: Ghost
-        if (level >= 12) pool.push({ weight: 15, type: MONSTERS.GHOST });
-
-        // Lvl 15+: Troll
-        if (level >= 15) pool.push({ weight: 10, type: MONSTERS.TROLL });
-
-        // Lvl 20+: Elite (Vampire, Beholder, etc)
-        if (level >= 20) {
-            pool.push({ weight: 10, type: MONSTERS.VAMPIRE });
-            pool.push({ weight: 5, type: MONSTERS.BEHOLDER });
+        // --- STAGE 1: GOBLINS (After Rat Boss) ---
+        // Introduce at S1, Peak S1-S2, Phase out by S5
+        if (bossKills >= 1 && bossKills <= 4) {
+            let weight = 80;
+            if (bossKills === 1) weight = 100;
+            if (bossKills === 2) weight = 80;
+            if (bossKills === 3) weight = 40;
+            if (bossKills === 4) weight = 10;
+            add(MONSTERS.GOBLIN, weight);
         }
 
-        // Lvl 30+: Bosses
-        if (level >= 30) {
-            pool.push({ weight: 5, type: MONSTERS.HYDRA });
-            pool.push({ weight: 2, type: MONSTERS.DRAGON });
+        // --- STAGE 2: SKELETONS (After Goblin Boss) ---
+        // Introduce S2, Peak S3, Phase out by S6
+        if (bossKills >= 2 && bossKills <= 6) {
+            let weight = 80;
+            if (bossKills === 2) weight = 60; // Just introduced
+            if (bossKills === 3) weight = 100; // Peak
+            if (bossKills >= 5) weight = 30; // Fading
+            add(MONSTERS.SKELETON, weight);
+        }
+
+        // --- STAGE 3: ORCS (After Skeleton Boss) ---
+        // Introduce S3, Peak S4-S5, Phase out by S8 (End)
+        if (bossKills >= 3 && bossKills <= 8) {
+            let weight = 70;
+            if (bossKills === 3) weight = 50;
+            if (bossKills >= 4 && bossKills <= 5) weight = 100; // Main enemy mid-game
+            if (bossKills >= 7) weight = 20;
+            add(MONSTERS.ORC, weight);
+        }
+
+        // --- STAGE 4: GHOSTS ---
+        // Fast, annoying. Mid-late game harassment.
+        if (bossKills >= 4) {
+            let weight = 40;
+            if (bossKills >= 6) weight = 60; // More common later
+            add(MONSTERS.GHOST, weight);
+        }
+
+        // --- STAGE 5: TROLLS ---
+        // Tanks. Late game.
+        if (bossKills >= 5) {
+            add(MONSTERS.TROLL, (bossKills - 4) * 20); // 20, 40, 60...
+        }
+
+        // --- STAGE 6+: ELITES ---
+        if (bossKills >= 6) {
+            add(MONSTERS.VAMPIRE, (bossKills - 5) * 15);
+            add(MONSTERS.BEHOLDER, (bossKills - 5) * 10);
+        }
+        if (bossKills >= 7) {
+            add(MONSTERS.HYDRA, (bossKills - 6) * 10);
+        }
+        if (bossKills >= 8) {
+            add(MONSTERS.DRAGON, (bossKills - 7) * 5); // Very rare regular spawn
         }
 
         // Select from pool
         const totalWeight = pool.reduce((a, b) => a + b.weight, 0);
+
+        // Fallback if pool is empty (shouldn't happen with logic above, but safety first)
+        if (totalWeight === 0) return MONSTERS.RAT;
+
         let r = Math.random() * totalWeight;
 
         for (const entry of pool) {
@@ -144,5 +195,26 @@ export const Bestiary = {
         }
 
         return MONSTERS.RAT; // Fallback
+    },
+
+    getBoss(bossKills) {
+        // Fixed progression based on kills
+        // 0 kills -> need to fight Rat Boss
+        // 1 kill -> need to fight Goblin Boss
+        if (bossKills === 0) return MONSTERS.RAT;
+        if (bossKills === 1) return MONSTERS.GOBLIN;
+        if (bossKills === 2) return MONSTERS.SKELETON;
+        if (bossKills === 3) return MONSTERS.ORC;
+        if (bossKills === 4) return MONSTERS.GHOST;
+        if (bossKills === 5) return MONSTERS.TROLL;
+        if (bossKills === 6) return MONSTERS.VAMPIRE;
+        if (bossKills === 7) return MONSTERS.BEHOLDER;
+        if (bossKills === 8) return MONSTERS.HYDRA;
+
+        return MONSTERS.DRAGON; // 9+ kills
+    },
+
+    getAllMonsters() {
+        return Object.values(MONSTERS);
     }
 };

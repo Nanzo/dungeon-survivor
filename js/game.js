@@ -55,12 +55,44 @@ window.addEventListener('resize', function () {
     }
 });
 
-class Game {
+export class Game {
     constructor(width, height, classType) {
         this.width = width;
         this.height = height;
         this.input = new Input();
         this.map = new Map(this);
+
+        // Touch / Virtual Joystick Logic
+        this.touchStart = null;
+
+        window.addEventListener('touchstart', (e) => {
+            this.touchStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }, { passive: false });
+
+        window.addEventListener('touchmove', (e) => {
+            if (!this.touchStart) return;
+            e.preventDefault(); // Prevent scrolling
+
+            const touch = e.touches[0];
+            const dx = touch.clientX - this.touchStart.x;
+            const dy = touch.clientY - this.touchStart.y;
+
+            // Normalize to -1...1
+            // Max drag distance for full speed = 50px
+            const maxDrag = 50;
+            const distance = Math.hypot(dx, dy);
+            const clampedDist = Math.min(distance, maxDrag);
+
+            const normX = (dx / distance) * (clampedDist / maxDrag) || 0;
+            const normY = (dy / distance) * (clampedDist / maxDrag) || 0;
+
+            this.input.setJoystick(normX, normY);
+        }, { passive: false });
+
+        window.addEventListener('touchend', () => {
+            this.touchStart = null;
+            this.input.setJoystick(0, 0);
+        });
 
         if (classType === 'mage') {
             this.player = new Mage(this);
@@ -110,7 +142,15 @@ class Game {
 
         // Stats
         this.gameTime = 0;
+        this.bossKills = 0; // Track progression stages
+        this.stageTimestamps = { 0: 0 }; // When did each stage unlock?
         this.killCounts = {};
+
+        // DPS Tracking
+        this.dps = 0;
+        this.damageAccumulator = 0;
+        this.dpsTimer = 0;
+        this.dpsHistory = []; // For sliding window
 
         // HUD Elements
         this.hud = {
@@ -141,7 +181,10 @@ class Game {
             block: document.getElementById('hudBlock'),
 
             xpFill: document.getElementById('xpBarFill'),
-            xpText: document.getElementById('xpText')
+            xpText: document.getElementById('xpText'),
+            // New HUD
+            timer: document.getElementById('hudTimer'),
+            dps: document.getElementById('hudDPS')
         };
 
         if (this.hud.container) this.hud.container.style.display = 'block';
@@ -309,30 +352,68 @@ class Game {
         this.camera.x = this.player.x - this.width / 2 + this.player.width / 2;
         this.camera.y = this.player.y - this.height / 2 + this.player.height / 2;
 
-        // Dynamic Spawn Rate based on Level
-        // Dynamic Spawn Rate based on Level
-        // Base: 2000ms. Reduces by 150ms per level!
-        // Lvl 1: 1850ms
-        // Lvl 7: 950ms (Sub 1s)
-        // Lvl 10: 500ms
-        const currentInterval = Math.max(200, 2000 - (this.player.level * 150));
+        // DPS Calculation (Sliding Window: 5 x 200ms = 1s)
+        this.dpsTimer += deltaTime;
+        if (this.dpsTimer >= 200) {
+            // Shift history
+            this.dpsHistory.push(this.damageAccumulator);
+            if (this.dpsHistory.length > 5) this.dpsHistory.shift();
+
+            // Calculate total over last second
+            this.dps = this.dpsHistory.reduce((a, b) => a + b, 0);
+
+            this.damageAccumulator = 0;
+            this.dpsTimer = 0;
+        }
+
+        // Dynamic Spawn Rate based on Game Time
+        // Base: 2000ms. Reduces by 200ms every 1 minute (60000ms).
+        // 0-1 min: 2000ms
+        // 1-2 min: 1800ms
+        // ...
+        // 9-10 min: 200ms (Cap)
+        const minutesPassed = Math.floor(this.gameTime / 60000);
+        const currentInterval = Math.max(200, 2000 - (minutesPassed * 200));
 
         if (this.enemyTimer > currentInterval) {
-            // New: Bestiary
-            const monsterConfig = Bestiary.getSpawn(this.player.level);
 
-            // Generate NEW config object to avoid mutating the Bestiary reference
-            const spawnConfig = { ...monsterConfig };
+            // TIME-BASED BOSS SPAWN
+            // Boss spawns every 2 minutes (120,000 ms)
+            // We use a floor check to see if we passed a 2-min threshold we haven't handled yet.
+            const bossInterval = 120000; // 2 minutes
+            const nextBossThreshold = (this.bossKills + 1) * bossInterval;
 
-            // BOSS CHECK: Guaranteed every 5 levels
-            // Logic: If level is multiple of 5, and we haven't spawned a boss for this level yet.
-            if (this.player.level % 5 === 0 && (this.lastBossLevel || 0) < this.player.level) {
+            if (this.gameTime >= nextBossThreshold && !this.bossSpawnedForCurrentStage) {
+                // Determine Boss based on Kill Count (Stage)
+                // Stage 0 -> Rat Boss
+                // Stage 1 -> Goblin Boss
+                // etc.
+                const bossConfig = Bestiary.getBoss(this.bossKills);
+                const spawnConfig = { ...bossConfig };
                 spawnConfig.isBoss = true;
-                this.lastBossLevel = this.player.level;
-                console.log(`[Game] Spawning BOSS for Level ${this.player.level}! Type: ${spawnConfig.name}`);
-            }
 
-            this.enemies.push(new Monster(this, spawnConfig, this.player.level));
+                console.log(`[Game] Spawning BOSS for Stage ${this.bossKills}! Type: ${spawnConfig.name}`);
+                this.enemies.push(new Monster(this, spawnConfig, this.player.level)); // Level scales stats
+
+                this.bossSpawnedForCurrentStage = true; // Prevent multiple spawns for this stage
+            } else {
+                // Normal Spawn
+                // Get Spawn Config and Stage Info
+                const spawnData = Bestiary.getSpawn(this.bossKills);
+
+                // Calculate Fortification
+                const introTime = this.stageTimestamps[spawnData.stage] || 0;
+                const timeAvailable = this.gameTime - introTime;
+                const fortificationLevel = Math.floor(timeAvailable / 60000);
+
+                const spawnConfig = { ...spawnData };
+
+                // Roll for Rare "Enraged" Spawn (2.5% Chance)
+                // Rare spawns have multiplied stats and a visual tint
+                const isRare = Math.random() < 0.025;
+
+                this.enemies.push(new Monster(this, spawnConfig, this.player.level, fortificationLevel, isRare));
+            }
 
             this.enemyTimer = 0;
         } else {
@@ -344,10 +425,13 @@ class Game {
             enemy.update(deltaTime);
             if (enemy.markedForDeletion && enemy.hp <= 0) { // Only if killed, not just despawned
                 if (enemy.xpValue) this.player.gainXp(enemy.xpValue);
-                if (this.player.lifeOnKill > 0) this.player.heal(this.player.lifeOnKill);
+                if (this.player.lifeOnKill > 0) this.player.heal(this.player.lifeOnKill, 'life_on_kill');
 
                 // Check for Boss Kill
                 if (enemy.isBoss) {
+                    this.bossKills++;
+                    this.stageTimestamps[this.bossKills] = this.gameTime; // Record unlock time
+                    this.bossSpawnedForCurrentStage = false; // Reset flag for next stage
                     this.triggerBossReward();
                 }
             }
@@ -420,6 +504,21 @@ class Game {
         const xpPercent = Math.min(100, Math.max(0, (this.player.xp / this.player.nextLevelXp) * 100));
         this.hud.xpFill.style.width = `${xpPercent}%`;
         this.hud.xpText.innerText = `${Math.floor(this.player.xp)} / ${this.player.nextLevelXp} XP`;
+
+        // Update Timer & DPS
+        if (this.hud.timer) {
+            const totalSeconds = Math.floor(this.gameTime / 1000);
+            const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+            const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+            this.hud.timer.innerText = `${minutes}:${seconds}`;
+        }
+        if (this.hud.dps) {
+            this.hud.dps.innerText = `DPS: ${Math.round(this.dps)}`;
+        }
+    }
+
+    recordDamage(amount) {
+        this.damageAccumulator += amount;
     }
 
     draw(ctx) {
@@ -467,12 +566,177 @@ const btnAboutBack = document.getElementById('btnAboutBack');
 
 const selectionScreen = document.getElementById('selectionScreen');
 
+// Bestiary UI
+const btnBestiary = document.getElementById('btnBestiary');
+const bestiaryScreen = document.getElementById('bestiaryScreen');
+const btnBestiaryBack = document.getElementById('btnBestiaryBack');
+const bestiaryList = document.getElementById('bestiaryList');
+const bestiaryDetails = document.getElementById('bestiaryDetails');
+
+if (btnBestiary) {
+    btnBestiary.addEventListener('click', () => {
+        mainMenu.style.display = 'none';
+        bestiaryScreen.style.display = 'flex';
+        populateBestiary();
+    });
+}
+
+if (btnBestiaryBack) {
+    btnBestiaryBack.addEventListener('click', () => {
+        bestiaryScreen.style.display = 'none';
+        mainMenu.style.display = 'flex';
+    });
+}
+
+function populateBestiary() {
+    bestiaryList.innerHTML = '';
+    const monsters = Bestiary.getAllMonsters();
+
+    // Loop through each monster type
+    monsters.forEach(config => {
+        // Normal Version
+        createBestiaryItem(config, false);
+        // Boss Version
+        createBestiaryItem(config, true);
+    });
+
+    // Select first item by default
+    if (bestiaryList.firstChild) {
+        bestiaryList.firstChild.click();
+    }
+}
+
+function createBestiaryItem(config, isBoss) {
+    const div = document.createElement('div');
+    div.className = 'bestiary-item';
+
+    // Icon
+    const asset = Assets.getEnemyAsset(config.assetKey, isBoss);
+    // Style asset to fit
+    asset.style.maxWidth = '64px';
+    asset.style.maxHeight = '64px';
+    asset.style.objectFit = 'contain';
+
+    div.appendChild(asset);
+
+    const nameSpan = document.createElement('span');
+    nameSpan.innerText = (isBoss ? "Boss " : "") + config.name;
+    nameSpan.style.textAlign = 'center';
+    nameSpan.style.fontSize = '0.8em';
+    div.appendChild(nameSpan);
+
+    div.addEventListener('click', () => {
+        // Highlight selection
+        Array.from(bestiaryList.children).forEach(c => c.classList.remove('selected'));
+        div.classList.add('selected');
+        showMonsterDetails(config, isBoss);
+    });
+
+    bestiaryList.appendChild(div);
+}
+
+function showMonsterDetails(config, isBoss) {
+    const name = (isBoss ? "Boss " : "") + config.name;
+
+    bestiaryDetails.innerHTML = '';
+
+    // Header
+    const h1 = document.createElement('h1');
+    h1.innerText = name;
+    h1.style.color = isBoss ? 'red' : 'white';
+    h1.style.textShadow = isBoss ? '0 0 10px red' : 'none';
+    h1.style.marginBottom = '20px';
+    bestiaryDetails.appendChild(h1);
+
+    // Large Preview
+    const container = document.createElement('div');
+    container.style.width = '200px';
+    container.style.height = '200px';
+    container.style.display = 'flex';
+    container.style.alignItems = 'center';
+    container.style.justifyContent = 'center';
+    container.style.marginBottom = '30px';
+    container.style.border = '1px solid #444';
+    container.style.borderRadius = '10px';
+    container.style.background = '#000';
+
+    const asset = Assets.getEnemyAsset(config.assetKey, isBoss);
+    // Scale up normal mobs
+    if (!isBoss) {
+        asset.style.width = '128px'; // 2x+
+        asset.style.imageRendering = 'pixelated';
+    } else {
+        asset.style.maxWidth = '100%';
+        asset.style.maxHeight = '100%';
+    }
+    container.appendChild(asset);
+    bestiaryDetails.appendChild(container);
+
+    // Stats Grid
+    const statsDiv = document.createElement('div');
+    statsDiv.style.display = 'grid';
+    statsDiv.style.gridTemplateColumns = '1fr 1fr';
+    statsDiv.style.gap = '15px';
+    statsDiv.style.width = '100%';
+    statsDiv.style.maxWidth = '400px';
+    statsDiv.style.fontSize = '1.1em';
+
+    // Calculate Stats
+    // Monster.js multipliers:
+    // Boss: HP x5, Dmg x2, XP x10
+    const hp = config.hp * (isBoss ? 5 : 1);
+    const dmg = config.damage * (isBoss ? 2 : 1);
+    const xp = config.xp * (isBoss ? 10 : 1);
+    const spd = config.speed; // Bosses have same base speed usually
+
+    const hpScale = config.hpScale * (isBoss ? 5 : 1);
+    const dmgScale = config.dmgScale * (isBoss ? 1 : 1); // Boss dmg scale usually same or unscaled? Monster.js says: (config.damage + (lvl-1)*dmgScale). Boss multiplier applies to FINAL.
+    // Actually Monster.js:
+    // this.attackPower = (config.damage || 5) + ((level - 1) * dmgScale);
+    // if (isBoss) this.attackPower *= 2.0;
+    // So logic: Base * 2 + Scale * 2? No, (Base + Growth) * 2.
+    // So Base is Base*2, Growth is Growth*2.
+
+    const addStat = (label, value, color) => {
+        const d = document.createElement('div');
+        d.innerHTML = `<span style="color:#aaa">${label}:</span> <span style="float:right; color:${color}">${value}</span>`;
+        statsDiv.appendChild(d);
+    };
+
+    addStat("Base HP", hp, "#f66");
+    addStat("HP Growth", `+${hpScale}/lvl`, "#f66");
+
+    addStat("Base Damage", dmg, "#fff");
+    addStat("Dmg Growth", `+${dmgScale * (isBoss ? 2 : 1)}/lvl`, "#fff");
+
+    addStat("Speed", spd, "#6f6");
+    addStat("Base XP", xp, "#66f");
+
+    bestiaryDetails.appendChild(statsDiv);
+
+    // Description
+    const desc = document.createElement('p');
+    desc.style.marginTop = '30px';
+    desc.style.color = '#888';
+    desc.style.fontStyle = 'italic';
+    desc.innerText = isBoss ? "A powerful creature that guards the dungeon depths." : "A common creature found in the dungeon.";
+    bestiaryDetails.appendChild(desc);
+}
+
 // Main Menu Logic
 if (btnPlayNow) {
     btnPlayNow.addEventListener('click', () => {
         console.log("Play Button Clicked");
         mainMenu.style.display = 'none';
         selectionScreen.style.display = 'grid'; // Enable Grid
+    });
+}
+
+const btnSelectionBack = document.getElementById('btnSelectionBack');
+if (btnSelectionBack) {
+    btnSelectionBack.addEventListener('click', () => {
+        selectionScreen.style.display = 'none';
+        mainMenu.style.display = 'flex';
     });
 }
 
